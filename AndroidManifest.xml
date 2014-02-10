@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="cn.com.zhenshiyin.crowd.HomeActivity"
+            android:name="cn.com.zhenshiyin.crowd.activity.main.HomeActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,9 +1,9 @@
-package cn.com.zhenshiyin.crowd;
+package cn.com.zhenshiyin.crowd.activity.main;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
-
+import cn.com.zhenshiyin.crowd.R;
 public class HomeActivity extends Activity {
 
 	@Override
