@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/title_container"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/black">
+    
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="@android:color/transparent"
+        android:layout_below="@+id/title"
+        />
+    
+    <LinearLayout android:id="@+id/title"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/title_height"
+	    android:background="@drawable/title_background"
+	    android:orientation="horizontal"
+	    android:paddingLeft="@dimen/title_left_padding"
+	    android:paddingRight="@dimen/title_right_padding"
+	    android:focusable="true"
+    	android:focusableInTouchMode="true"
+	    android:gravity="center_vertical">
+	    
+<!--         <RelativeLayout android:id="@+id/title" -->
+<!--             android:layout_width="match_parent" -->
+<!--             android:layout_height="@dimen/title_height" -->
+<!--             android:layout_marginTop="1dip" -->
+<!--             android:paddingLeft="@dimen/title_left_padding" -->
+<!-- 	    	android:paddingRight="@dimen/title_right_padding" -->
+<!-- 	    	android:background="@drawable/title_background" -->
+<!-- 	    	android:focusable="true" -->
+<!-- 	    	android:focusableInTouchMode="true" -->
+<!--              > -->
+            
+            <ImageView android:id="@+id/title_left_button"
+		        android:layout_width="@dimen/title_icon_width"
+		        android:layout_height="@dimen/title_icon_height"
+		        android:layout_centerVertical="true"
+		        android:onClick="onBack"
+		        android:scaleType="fitStart"
+		        android:src="@drawable/ic_back" />
+            
+            <TextView android:id="@+id/title_content"
+		        android:layout_width="0dip"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:layout_marginLeft="4dip"
+		        android:layout_marginRight="4dip"
+		        android:gravity="center"
+		        android:text="标题"
+		        android:singleLine="true"
+		        android:ellipsize="marquee"
+		        style="@style/title_text_style" />
+            
+            <ImageView android:id="@+id/title_right_button"
+		        android:layout_width="@dimen/title_icon_width"
+		        android:layout_height="@dimen/title_icon_height"
+		        android:gravity="center"
+		        android:scaleType="fitEnd"/>
+            
+            <Button android:id="@+id/title_right_button1"
+		        android:layout_width="@dimen/title_icon_width"
+		        android:layout_height="@dimen/title_icon_height"
+		        style="@style/button_red_style"
+		        android:visibility="gone" />
+            
+<!--         </RelativeLayout> -->
+	</LinearLayout>
+
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="@color/title_delimiter_color"
+        android:layout_below="@+id/title"
+        />
+</LinearLayout>

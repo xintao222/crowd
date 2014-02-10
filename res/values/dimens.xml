@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    
+    <dimen name="activity_horizontal_margin">12dp</dimen>
+    <dimen name="activity_vertical_margin">12dp</dimen>
+    
+    <!-- Title related -->
+    <dimen name="title_height">44dip</dimen>
+    <dimen name="title_delimiter_top">43dip</dimen>
+    <dimen name="title_left_padding">8dip</dimen>
+    <dimen name="title_right_padding">8dip</dimen>
+    <dimen name="title_icon_width">80dip</dimen>
+    <dimen name="title_icon_height">38dip</dimen>
+    
+    <!-- Tab related -->
+    <dimen name="tab_height">50dip</dimen>
+    <dimen name="tab_indicator_text_size">10sp</dimen>
+    
+    <!-- Sliding menu related -->
+    <dimen name="slidingmenu_offset">48dip</dimen>
+    <dimen name="slidingmenu_shadow_width">2dip</dimen>
+    <dimen name="list_padding">8dip</dimen>
+	<dimen name="list_item_height">44dip</dimen>
+	
+	<!-- Flow related -->
+	<dimen name="flow_item_height">124dip</dimen>
+	<dimen name="chart_margin_size">40dip</dimen>
+	<dimen name="chart_label_text_size">14dip</dimen>
+	<dimen name="chart_title_text_size">20dip</dimen>
+	<dimen name="chart_legend_text_size">10dip</dimen>
+	<!-- Color label related -->
+	<dimen name="label_padding_top">8dip</dimen>
+	<dimen name="label_padding_bottom">8dip</dimen>
+	<dimen name="label_height">34dip</dimen>
+	<dimen name="label_text_size1">6sp</dimen>
+	<dimen name="label_text_size2">7sp</dimen>
+	<dimen name="label_text_size3">8sp</dimen>
+	<dimen name="label_text_large_size1">10sp</dimen>
+	<dimen name="label_text_large_size2">12sp</dimen>
+	<dimen name="label_text_large_size3">14sp</dimen>
+	
+	<!-- Ticket list related -->
+	<dimen name="ticket_list_item_height">100dip</dimen>
+	<dimen name="quick_to_top_height">40dip</dimen>
+	<dimen name="quick_to_top_width">40dip</dimen>
+	
+	<!-- Top tabbar related -->
+	<dimen name="top_tabbar_height">36dip</dimen>
+	
+	<!-- LetterView width -->
+	<dimen name="letter_view_width">30dip</dimen>
+	
+	<dimen name="home_banner_height">194dp</dimen>
+	
+	<!-- Ramble -->
+	<dimen name="focus_scenic_height">194dp</dimen>
+	<dimen name="focus_download_icon_width">44dp</dimen>
+    <dimen name="focus_download_icon_height">44dp</dimen>
+    <dimen name="focus_index_icon_width">40dp</dimen>
+    <dimen name="focus_index_icon_height">40dp</dimen>
+    <dimen name="intrudoction_banner_height">194dp</dimen>
+    <dimen name="focus_listview_divider_height">24dp</dimen>
+    <dimen name="bookcover_banner_height">194dp</dimen>
+    <dimen name="bookcover_title_height">48dp</dimen>
+    <dimen name="bookcover_shared_width">32dp</dimen>
+    <dimen name="bookcover_shared_height">32dp</dimen>
+    
+    <!-- Round rectangle dimens -->
+    <dimen name="round_rectangle_corner_size">5dp</dimen>
+    
+    <!-- Event related -->
+    <dimen name="event_thumb_width">120dp</dimen>
+    <dimen name="event_thumb_height">90dp</dimen>
+    
+    <!-- zxing related -->
+    <dimen name="standard_padding">8dip</dimen>
+	<dimen name="half_padding">4dip</dimen>
+  
+</resources> 
