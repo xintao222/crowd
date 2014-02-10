@@ -4,7 +4,7 @@ import android.util.Log;
 
 public class LogUtil {
 
-	public static final boolean IS_LOG = false;
+	public static final boolean IS_LOG = true;
 
 	private final static String LOG_TAG_STRING = "CROWD_Android";
 

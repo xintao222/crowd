@@ -8,4 +8,11 @@
      
 	<!-- 自定义对话框 -->
 	<string name="loading_data">正在加载数据...</string>
+	
+		<!-- Map related -->
+	<string name="map_scenic_spots">景点</string>
+	<string name="map_scenic_restaurants">餐馆</string>
+	<string name="map_scenic_hotels">酒店</string>
+	<string name="navigation_map">地图</string>
+	<string name="navigation_nav">导航</string>
 </resources>

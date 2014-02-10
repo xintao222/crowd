@@ -86,9 +86,7 @@ public class MyApplication extends Application {
 	public BMapManager getMapManager() {
 		return mBMapMan;
 	}
-	
 
-	
 	public String getCacheDirPath(int cacheType) {
 		if (cacheType == CACHE_SDCARD) {
 			try {
