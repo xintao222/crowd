@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<resources>
+    <declare-styleable name="TagHolderView">
+        <attr name="spanEntries" format="reference"/>
+        <attr name="spanBackground" format="reference" />
+        <attr name="spanSelectBackground" format="reference" />
+        <attr name="isBackgroundRandom" format="boolean" />
+    </declare-styleable>
+    
+    <declare-styleable name="FirstGuideView">
+        <attr name="guideEntries" format="reference" />
+    </declare-styleable>
+</resources>

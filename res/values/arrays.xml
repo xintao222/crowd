@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+	<!-- Random colors for TagHolderView widget. -->  
+    <integer-array name="tag_colors">
+        <item>@color/tag_random_color1</item>
+        <item>@color/tag_random_color2</item>
+        <item>@color/tag_random_color3</item>
+        <item>@color/tag_random_color4</item>
+        <item>@color/tag_random_color5</item>
+        <item>@color/tag_random_color6</item>
+    </integer-array>
+    
+    <!-- HomeActivity's navigation item related-->
+<!--     <array name="home_navigation_icons"> -->
+<!--     	<item>@drawable/home_navigation_icon1</item> -->
+<!--     	<item>@drawable/home_navigation_icon2</item> -->
+<!--     	<item>@drawable/home_navigation_icon3</item> -->
+<!--     	<item>@drawable/home_navigation_icon4</item> -->
+<!--     </array> -->
+    
+<!--     <string-array name="home_navigation_descriptions"> -->
+<!--         <item>@string/home_navigation_description1</item> -->
+<!--         <item>@string/home_navigation_description2</item> -->
+<!--         <item>@string/home_navigation_description3</item> -->
+<!--         <item>@string/home_navigation_description4</item> -->
+<!--     </string-array> -->
+    
+<!--     <string-array name="home_navigation_contents"> -->
+<!--         <item>@string/home_navigation_content1</item> -->
+<!--         <item>@string/home_navigation_content2</item> -->
+<!--         <item>@string/home_navigation_content3</item> -->
+<!--         <item>@string/home_navigation_content4</item> -->
+<!--     </string-array> -->
+    
+<!--     Tool related -->
+<!--     <array name="tool_icons"> -->
+<!--                 <item>@drawable/tool_hotel_flight</item> -->
+<!-- 		<item>@drawable/tool_navigation</item> -->
+
+<!--         <item>@drawable/tool_guide</item> -->
+<!--         <item>@drawable/tool_agent</item> -->
+<!--         <item>@drawable/tool_city</item> -->
+<!--         <item>@drawable/tool_settings</item> -->
+<!--     </array> -->
+<!--     <string-array name="tool_tags"> -->
+<!--         <item>@string/tool_navigation</item> -->
+<!--         <item>@string/tool_guide</item> -->
+<!--         <item>@string/tool_agent</item> -->
+<!--         <item>@string/tool_city</item> -->
+<!--         <item>@string/tool_settings</item> -->
+<!--     </string-array> -->
+    
+<!--     root is the package name. -->
+<!--     <string-array translatable="false" name="tool_intent"> -->
+<!--         <item>.activity.tools.NavigationActivity</item> -->
+<!--         <item>.activity.tools.GuideVerifyActivity</item> -->
+<!--         <item>.activity.tools.AgencyVerifyActivity</item> -->
+<!--         <item>.activity.tools.CityAbstractActivity</item> -->
+<!--         <item>.activity.more.SettingsActivity</item> -->
+<!--     </string-array> -->
+    
+<!--     TagHolderView related -->
+<!--     <string-array name="scenic_spots_labels"> -->
+<!--         <item>@string/scenic_spots_label1</item> -->
+<!--         <item>@string/scenic_spots_label2</item> -->
+<!--         <item>@string/scenic_spots_label3</item> -->
+<!--         <item>@string/scenic_spots_label4</item> -->
+<!--         <item>@string/scenic_spots_label5</item> -->
+<!--         <item>@string/scenic_spots_label6</item> -->
+<!--         <item>@string/scenic_spots_label7</item> -->
+<!--         <item>@string/scenic_spots_label8</item> -->
+<!--         <item>@string/scenic_spots_label9</item> -->
+<!--         <item>@string/scenic_spots_label10</item> -->
+<!--         <item>@string/scenic_spots_label11</item> -->
+<!--     </string-array> -->
+    
+<!--     <string-array name="travel_routes_labels"> -->
+<!--         <item>@string/travel_routes_label1</item> -->
+<!--     </string-array> -->
+    
+<!--     root is the package name. -->
+<!--     <string-array translatable="false" name="home_gridview_intents"> -->
+<!--         <item>.activity.ticket.TicketMainActivity</item> -->
+<!--         <item>.activity.tools.NavigationActivity</item> -->
+<!--         <item>.activity.route.RouteMainActivity</item> -->
+<!--         <item>.activity.flow.FlowMainActivity</item> -->
+<!--     </string-array> -->
+    
+<!--     Register steps -->
+<!--     <string-array name="register_steps"> -->
+<!--         <item>@string/register_step1</item> -->
+<!--         <item>@string/register_step2</item> -->
+<!--         <item>@string/register_step3</item> -->
+<!--     </string-array> -->
+    
+<!--     <string-array name="recommend_by"> -->
+<!--         <item>@string/recommend_by_sms</item> -->
+<!--         <item>@string/recommend_by_mail</item> -->
+<!--     </string-array> -->
+    
+<!--     Zxing related -->
+<!--     <string-array name="country_codes"> -->
+<!-- 	    <item>-</item> -->
+<!-- 	    <item>AR</item> -->
+<!-- 	    <item>AU</item> -->
+<!-- 	    <item>BR</item> -->
+<!-- 	    <item>BG</item> -->
+<!-- 	    <item>CA</item> -->
+<!-- 	    <item>CH</item> -->
+<!-- 	    <item>CN</item> -->
+<!-- 	    <item>CZ</item> -->
+<!-- 	    <item>DE</item> -->
+<!-- 	    <item>DK</item> -->
+<!-- 	    <item>ES</item> -->
+<!-- 	    <item>FI</item> -->
+<!-- 	    <item>FR</item> -->
+<!-- 	    <item>GB</item> -->
+<!-- 	    <item>GR</item> -->
+<!-- 	    <item>HU</item> -->
+<!-- 	    <item>ID</item> -->
+<!-- 	    <item>IT</item> -->
+<!-- 	    <item>JP</item> -->
+<!-- 	    <item>KR</item> -->
+<!-- 	    <item>NL</item> -->
+<!-- 	    <item>PL</item> -->
+<!-- 	    <item>PT</item> -->
+<!-- 	    <item>RO</item>     -->
+<!-- 	    <item>RU</item> -->
+<!-- 	    <item>SE</item> -->
+<!-- 	    <item>SK</item> -->
+<!-- 	    <item>SI</item> -->
+<!-- 	    <item>TR</item> -->
+<!-- 	    <item>TW</item> -->
+<!-- 	    <item>US</item> -->
+<!-- 	</string-array> -->
+	
+	<string-array name="preferences_front_light_values">
+	    <item>ON</item>
+	    <item>AUTO</item>
+	    <item>OFF</item>
+	</string-array>
+	
+<!-- 	<string-array name="preferences_front_light_options"> -->
+<!-- 	    <item>@string/preferences_front_light_on</item> -->
+<!-- 	    <item>@string/preferences_front_light_auto</item> -->
+<!-- 	    <item>@string/preferences_front_light_off</item> -->
+<!-- 	</string-array> -->
+	
+	<array name="guide_entries">
+	    <item>@drawable/one</item>
+	    <item>@drawable/two</item>
+	    <item>@drawable/three</item>
+	</array>
+  
+</resources>

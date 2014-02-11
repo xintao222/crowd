@@ -40,6 +40,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -106,14 +107,14 @@ public class NavigationMapActivity extends BaseMapActivity implements OnClickLis
 		longtitude = intent.getDoubleExtra(Constants.KEY_LONGTITUDE, -1);
 		latitude = intent.getDoubleExtra(Constants.KEY_LATITUDE, -1);
 		
-		if (LogUtil.IS_LOG) LogUtil.d(TAG, "longtitude=" + longtitude + " ; latitude=" + latitude);
+		if (LogUtil.IS_LOG) Log.d(TAG, "longtitude=" + longtitude + " ; latitude=" + latitude);
 		if (longtitude != -1 && latitude != -1) {
 			mDstGeoPoint = new GeoPoint((int)(latitude*1e6), (int)(longtitude*1e6));
 		}
 		
 		currentLongitude = intent.getDoubleExtra(Constants.KEY_CURRENT_LONGTITUDE, -1);
 		currentLatitude = intent.getDoubleExtra(Constants.KEY_CURRENT_LATITUDE, -1);
-		if (LogUtil.IS_LOG) LogUtil.d(TAG, "currentLongitude=" + currentLongitude + " ; currentLatitude=" + currentLatitude);
+		if (LogUtil.IS_LOG) Log.d(TAG, "currentLongitude=" + currentLongitude + " ; currentLatitude=" + currentLatitude);
 		if (longtitude != -1 && latitude != -1) {
 			mOriGeoPoint = new GeoPoint((int)(currentLatitude*1e6), (int)(currentLongitude*1e6));
 		}

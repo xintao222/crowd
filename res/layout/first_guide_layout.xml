@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cn.com.zhenshiyin.crowd.widget.FirstGuideView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:FirstGuideView="http://schemas.android.com/apk/res/cn.com.zhenshiyin.crowd"
+    android:id="@+id/first_guide"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    FirstGuideView:guideEntries="@array/guide_entries" />
