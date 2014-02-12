@@ -1,10 +1,14 @@
 package cn.com.zhenshiyin.crowd.activity.account;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +23,25 @@ import cn.com.zhenshiyin.crowd.common.Common;
 import cn.com.zhenshiyin.crowd.common.Constants;
 import cn.com.zhenshiyin.crowd.util.LogUtil;
 
+import cn.com.zhenshiyin.crowd.xmpp.NotificationService;
+import cn.com.zhenshiyin.crowd.xmpp.ServiceManager;
+import cn.com.zhenshiyin.crowd.xmpp.XmppManager;
+
 public class StartAccountActivity extends BaseActivity {
+	protected static NotificationService.NotificationServiceBinder  binder;
+	protected static NotificationService ns;
+	protected ServiceConnection conn = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			 Log.d(TAG, "onServiceConnected()...");
+			binder = (NotificationService.NotificationServiceBinder) service;
+			ns = binder.getService();
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+		}
+	};
 	private static final String TAG = "StartAccountActivity";
 	
 	private static final int REQUEST_LOGIN = 100;
@@ -52,6 +74,19 @@ public class StartAccountActivity extends BaseActivity {
 		setContentView(R.layout.account);
 		
 		initViews();
+		
+        // Start the service
+        ServiceManager serviceManager = new ServiceManager(this);
+        serviceManager.setNotificationIcon(R.drawable.notification);
+        serviceManager.startService();
+    	Intent intent = new Intent(this, cn.com.zhenshiyin.crowd.xmpp.NotificationService.class);
+
+    	boolean bindResult = getApplicationContext().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    	if (!bindResult) {
+            if (LogUtil.IS_LOG) Log.d(TAG, "Binding to service failed");
+            throw new IllegalStateException("Binding to service failed " + intent);
+
+        }
 	}
 	
 	@Override
@@ -186,6 +221,16 @@ public class StartAccountActivity extends BaseActivity {
 		// Invalid check. TODO:
 		name = nameEditor.getText().toString();
 		password = passwordEditor.getText().toString();
+    	XmppManager xm = new XmppManager(ns);
+    	xm.setPassword(password);
+    	xm.setUsername(name);
+    	
+    	ns.setXmppManager(xm);
+        ns.taskSubmitter.submit(new Runnable() {
+            public void run() {
+                ns.start();
+            }
+        });
 		
 		// Build and request.
 

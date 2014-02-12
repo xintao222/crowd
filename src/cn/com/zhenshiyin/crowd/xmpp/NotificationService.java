@@ -44,7 +44,7 @@ public class NotificationService extends Service {
 
     private static final String LOGTAG = "NotificationService";
 
-    public static final String SERVICE_NAME = "org.androidpn.client.NotificationService";
+
 
     private TelephonyManager telephonyManager;
 
@@ -151,7 +151,7 @@ public class NotificationService extends Service {
     }
 
     public static Intent getIntent() {
-        return new Intent(SERVICE_NAME);
+        return new Intent(Constants.SERVICE_NAME);
     }
 
     public ExecutorService getExecutorService() {

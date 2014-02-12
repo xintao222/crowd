@@ -81,6 +81,25 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait" >
         </activity>
+        
+        <service android:enabled="true"
+			android:name="cn.com.zhenshiyin.crowd.xmpp.NotificationService"
+			android:label="NotificationService">
+			<intent-filter>
+				<action android:name="cn.com.zhenshiyin.crowd.xmpp.NotificationService" />
+			</intent-filter>
+		</service>
+		
+        <receiver android:name="cn.com.zhenshiyin.crowd.xmpp.NotificationReceiver">
+            <intent-filter>
+                <!-- 接收push消息 -->
+<!--                 <action android:name="com.baidu.android.pushservice.action.MESSAGE" /> -->
+<!--                 接收bind,unbind,fetch,delete等反馈消息 -->
+<!--                 <action android:name="com.baidu.android.pushservice.action.RECEIVE" /> -->
+<!--                 <action android:name="com.baidu.android.pushservice.action.notification.CLICK" /> -->
+            </intent-filter>
+        </receiver>
+		
 
         <service
             android:name=".service.LocationService"
@@ -136,7 +155,7 @@
 	<!--<uses-permission android:name="android.permission.SEND_SMS" /> -->
 	<!--<uses-permission android:name="android.permission.RECEIVE_SMS" /> -->
 	
-    <!-- baidu Push service 运行需要的权限 -->
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />  
@@ -145,7 +164,7 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     
-    <!-- baidu Push for log. -->
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />

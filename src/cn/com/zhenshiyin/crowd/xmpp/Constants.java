@@ -77,5 +77,7 @@ public class Constants {
     public static final String ACTION_NOTIFICATION_CLICKED = "org.androidpn.client.NOTIFICATION_CLICKED";
 
     public static final String ACTION_NOTIFICATION_CLEARED = "org.androidpn.client.NOTIFICATION_CLEARED";
+    
+    public static final String SERVICE_NAME = "cn.com.zhenshiyin.crowd.xmpp.NotificationService";
 
 }
