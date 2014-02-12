@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewStub;
 import android.widget.TabHost;
 import cn.com.zhenshiyin.crowd.R;
+import cn.com.zhenshiyin.crowd.activity.account.StartAccountActivity;
 import cn.com.zhenshiyin.crowd.base.BaseTabActivity;
 import cn.com.zhenshiyin.crowd.common.Preferences;
 import cn.com.zhenshiyin.crowd.util.LogUtil;
@@ -73,7 +74,7 @@ public class PortalActivity extends BaseTabActivity {
 				.setContent(new Intent(this, HomeActivity.class)));
 		tabHost.addTab(tabHost.newTabSpec("CENTER")
 				.setIndicator(LayoutInflater.from(this).inflate(R.layout.tab_indicator_center, null))
-				.setContent(new Intent(this, HomeActivity.class)));
+				.setContent(new Intent(this, StartAccountActivity.class)));
 		
 		mGuideView = findViewById(R.id.guide);
 		

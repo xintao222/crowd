@@ -176,5 +176,17 @@ public class BaseActivity extends FragmentActivity implements ThreadCallBack{
 		// TODO Auto-generated method stub
 		
 	}
+	protected void showToast(String message)
+	{
+		Toast toast=Toast.makeText(this, (!StringUtil.isEmpty(message))?message:Constants.ERROR_MESSAGE, Toast.LENGTH_SHORT);
+		toast.setGravity(Gravity.CENTER, 0, 0);
+		toast.show();
+	}
+	
+	protected void showToast(String message, int length){
+		Toast toast=Toast.makeText(this, (!StringUtil.isEmpty(message))?message:Constants.ERROR_MESSAGE, length);
+		toast.setGravity(Gravity.CENTER, 0, 0);
+		toast.show();
+	}
 	
 }

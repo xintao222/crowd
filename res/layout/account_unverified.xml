@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/account_unverified"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dip"
+    android:orientation="vertical"
+    android:visibility="gone" >
+
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_color_red"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/name_editor"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dip"
+        android:background="@drawable/rectangle_background"
+        android:drawableLeft="@drawable/ic_account_name"
+        android:paddingLeft="8dp"
+        android:hint="@string/account_name_hint"
+        android:textColor="@android:color/black"
+        android:textCursorDrawable="@null" />
+
+    <EditText
+        android:id="@+id/password_editor"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+        android:layout_marginBottom="18dip"
+        android:background="@drawable/rectangle_background"
+        android:drawableLeft="@drawable/ic_account_password"
+        android:paddingLeft="8dp"
+        android:hint="@string/account_password_hint"
+        android:inputType="textPassword"
+        android:textColor="@android:color/black"
+        android:textCursorDrawable="@null" />
+    
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/list_item_height"
+        style="@style/button_blue_style"
+        android:onClick="login"
+        android:text="@string/account_login" />
+
+	<LinearLayout android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="20dp"
+	    android:gravity="center">
+	    
+	    <TextView android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/account_prompt_register"/>
+	    
+	    <TextView android:id="@+id/register"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="4dp"
+	        android:text="@string/account_fast_register"
+	        android:textColor="@color/text_color_red" />
+	</LinearLayout>
+</LinearLayout>

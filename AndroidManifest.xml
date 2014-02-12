@@ -44,6 +44,38 @@
             android:screenOrientation="portrait" >
         </activity>
         
+                <!-- 帐号相关 -->
+        <activity
+            android:name=".activity.account.StartAccountActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:label="@string/bottom_menu_center" >
+        </activity>
+        
+        <activity
+            android:name=".activity.account.AccountGetbackPasswordActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:label="@string/account_getback_password" >
+            
+        </activity>
+        <activity
+            android:name=".activity.account.AccountChangePasswordActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait" >
+        </activity>
+<!--         <activity -->
+<!--             android:name=".activity.account.VerifiedAccountActivity" -->
+<!--             android:configChanges="orientation|keyboardHidden" -->
+<!--             android:screenOrientation="portrait" > -->
+<!--         </activity> -->
+        <activity
+            android:name=".activity.account.AccountRegisterActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait" >
+        </activity>
+        
+        
         <service
             android:name=".service.LocationService"
             android:label="定位-service" />
