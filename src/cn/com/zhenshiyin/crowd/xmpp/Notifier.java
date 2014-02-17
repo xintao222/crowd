@@ -46,7 +46,7 @@ public class Notifier {
     public Notifier(Context context) {
         this.context = context;
         this.sharedPrefs = context.getSharedPreferences(
-                Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+                XmppConstants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         this.notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
     }
@@ -89,9 +89,9 @@ public class Notifier {
             //                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
             //            } else {
             //                String callbackActivityPackageName = sharedPrefs.getString(
-            //                        Constants.CALLBACK_ACTIVITY_PACKAGE_NAME, "");
+            //                        XmppConstants.CALLBACK_ACTIVITY_PACKAGE_NAME, "");
             //                String callbackActivityClassName = sharedPrefs.getString(
-            //                        Constants.CALLBACK_ACTIVITY_CLASS_NAME, "");
+            //                        XmppConstants.CALLBACK_ACTIVITY_CLASS_NAME, "");
             //                intent = new Intent().setClassName(callbackActivityPackageName,
             //                        callbackActivityClassName);
             //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -100,11 +100,11 @@ public class Notifier {
 
             Intent intent = new Intent(context,
                     NotificationDetailsActivity.class);
-            intent.putExtra(Constants.NOTIFICATION_ID, notificationId);
-            intent.putExtra(Constants.NOTIFICATION_API_KEY, apiKey);
-            intent.putExtra(Constants.NOTIFICATION_TITLE, title);
-            intent.putExtra(Constants.NOTIFICATION_MESSAGE, message);
-            intent.putExtra(Constants.NOTIFICATION_URI, uri);
+            intent.putExtra(XmppConstants.NOTIFICATION_ID, notificationId);
+            intent.putExtra(XmppConstants.NOTIFICATION_API_KEY, apiKey);
+            intent.putExtra(XmppConstants.NOTIFICATION_TITLE, title);
+            intent.putExtra(XmppConstants.NOTIFICATION_MESSAGE, message);
+            intent.putExtra(XmppConstants.NOTIFICATION_URI, uri);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -153,24 +153,24 @@ public class Notifier {
     }
 
     private int getNotificationIcon() {
-        return sharedPrefs.getInt(Constants.NOTIFICATION_ICON, 0);
+        return sharedPrefs.getInt(XmppConstants.NOTIFICATION_ICON, 0);
     }
 
     private boolean isNotificationEnabled() {
-        return sharedPrefs.getBoolean(Constants.SETTINGS_NOTIFICATION_ENABLED,
+        return sharedPrefs.getBoolean(XmppConstants.SETTINGS_NOTIFICATION_ENABLED,
                 true);
     }
 
     private boolean isNotificationSoundEnabled() {
-        return sharedPrefs.getBoolean(Constants.SETTINGS_SOUND_ENABLED, true);
+        return sharedPrefs.getBoolean(XmppConstants.SETTINGS_SOUND_ENABLED, true);
     }
 
     private boolean isNotificationVibrateEnabled() {
-        return sharedPrefs.getBoolean(Constants.SETTINGS_VIBRATE_ENABLED, true);
+        return sharedPrefs.getBoolean(XmppConstants.SETTINGS_VIBRATE_ENABLED, true);
     }
 
     private boolean isNotificationToastEnabled() {
-        return sharedPrefs.getBoolean(Constants.SETTINGS_TOAST_ENABLED, false);
+        return sharedPrefs.getBoolean(XmppConstants.SETTINGS_TOAST_ENABLED, false);
     }
 
 }

@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ComponentCallbacks2;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,12 +28,31 @@ import cn.com.zhenshiyin.crowd.util.AsyncImageLoader;
 import cn.com.zhenshiyin.crowd.util.LogUtil;
 import cn.com.zhenshiyin.crowd.util.StringUtil;
 import cn.com.zhenshiyin.crowd.util.SystemInfoUtils;
+import cn.com.zhenshiyin.crowd.xmpp.NotificationService;
+import cn.com.zhenshiyin.crowd.xmpp.XmppManager;
 import cn.com.zhenshiyin.crowd.R;
 
 import com.baidu.mobstat.StatService;
 
 public class BaseActivity extends FragmentActivity implements ThreadCallBack{
 	private static final String TAG = BaseActivity.class.getSimpleName();
+
+	protected static NotificationService.NotificationServiceBinder  binder;
+	protected static NotificationService notificationService;
+	protected static XmppManager xmppManager;
+	protected ServiceConnection conn = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			 Log.d(TAG, "onServiceConnected()...");
+			binder = (NotificationService.NotificationServiceBinder) service;
+			notificationService = binder.getService();
+			xmppManager = new XmppManager(notificationService);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+		}
+	};
 	/**
 	 * 当前activity所持有的所有请求
 	 */
@@ -45,7 +69,7 @@ public class BaseActivity extends FragmentActivity implements ThreadCallBack{
 	protected void onCreate(Bundle savedInstanceState) {
 		requestList = new ArrayList<BaseRequest>();
 		super.onCreate(savedInstanceState);
-		
+
 //		if (LogUtil.IS_LOG) LogUtil.d(TAG, "Window=" + getWindow());
 //		if (LogUtil.IS_LOG) LogUtil.d(TAG, "Attach Menu -----");
 //		BottomMenu menu = new BottomMenu(this);

@@ -43,7 +43,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
         setPreferenceDependencies();
 
         CheckBoxPreference notifyPref = (CheckBoxPreference) getPreferenceManager()
-                .findPreference(Constants.SETTINGS_NOTIFICATION_ENABLED);
+                .findPreference(XmppConstants.SETTINGS_NOTIFICATION_ENABLED);
         if (notifyPref.isChecked()) {
             notifyPref.setTitle("Notifications Enabled");
         } else {
@@ -56,7 +56,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 
         PreferenceManager preferenceManager = getPreferenceManager();
         preferenceManager
-                .setSharedPreferencesName(Constants.SHARED_PREFERENCE_NAME);
+                .setSharedPreferencesName(XmppConstants.SHARED_PREFERENCE_NAME);
         preferenceManager.setSharedPreferencesMode(Context.MODE_PRIVATE);
 
         PreferenceScreen root = preferenceManager.createPreferenceScreen(this);
@@ -66,7 +66,7 @@ public class NotificationSettingsActivity extends PreferenceActivity {
         //        root.addPreference(prefCat);
 
         CheckBoxPreference notifyPref = new CheckBoxPreference(this);
-        notifyPref.setKey(Constants.SETTINGS_NOTIFICATION_ENABLED);
+        notifyPref.setKey(XmppConstants.SETTINGS_NOTIFICATION_ENABLED);
         notifyPref.setTitle("Notifications Enabled");
         notifyPref.setSummaryOn("Receive push messages");
         notifyPref.setSummaryOff("Do not receive push messages");
@@ -86,18 +86,18 @@ public class NotificationSettingsActivity extends PreferenceActivity {
                 });
 
         CheckBoxPreference soundPref = new CheckBoxPreference(this);
-        soundPref.setKey(Constants.SETTINGS_SOUND_ENABLED);
+        soundPref.setKey(XmppConstants.SETTINGS_SOUND_ENABLED);
         soundPref.setTitle("Sound");
         soundPref.setSummary("Play a sound for notifications");
         soundPref.setDefaultValue(Boolean.TRUE);
-        // soundPref.setDependency(Constants.SETTINGS_NOTIFICATION_ENABLED);
+        // soundPref.setDependency(XmppConstants.SETTINGS_NOTIFICATION_ENABLED);
 
         CheckBoxPreference vibratePref = new CheckBoxPreference(this);
-        vibratePref.setKey(Constants.SETTINGS_VIBRATE_ENABLED);
+        vibratePref.setKey(XmppConstants.SETTINGS_VIBRATE_ENABLED);
         vibratePref.setTitle("Vibrate");
         vibratePref.setSummary("Vibrate the phone for notifications");
         vibratePref.setDefaultValue(Boolean.TRUE);
-        // vibratePref.setDependency(Constants.SETTINGS_NOTIFICATION_ENABLED);
+        // vibratePref.setDependency(XmppConstants.SETTINGS_NOTIFICATION_ENABLED);
 
         root.addPreference(notifyPref);
         root.addPreference(soundPref);
@@ -113,14 +113,14 @@ public class NotificationSettingsActivity extends PreferenceActivity {
 
     private void setPreferenceDependencies() {
         Preference soundPref = getPreferenceManager().findPreference(
-                Constants.SETTINGS_SOUND_ENABLED);
+                XmppConstants.SETTINGS_SOUND_ENABLED);
         if (soundPref != null) {
-            soundPref.setDependency(Constants.SETTINGS_NOTIFICATION_ENABLED);
+            soundPref.setDependency(XmppConstants.SETTINGS_NOTIFICATION_ENABLED);
         }
         Preference vibratePref = getPreferenceManager().findPreference(
-                Constants.SETTINGS_VIBRATE_ENABLED);
+                XmppConstants.SETTINGS_VIBRATE_ENABLED);
         if (vibratePref != null) {
-            vibratePref.setDependency(Constants.SETTINGS_NOTIFICATION_ENABLED);
+            vibratePref.setDependency(XmppConstants.SETTINGS_NOTIFICATION_ENABLED);
         }
     }
 

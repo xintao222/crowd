@@ -53,16 +53,16 @@ public class NotificationPacketListener implements PacketListener {
                 //                String notificationTicker = notification.getTicker();
                 String notificationUri = notification.getUri();
 
-                Intent intent = new Intent(Constants.ACTION_SHOW_NOTIFICATION);
-                intent.putExtra(Constants.NOTIFICATION_ID, notificationId);
-                intent.putExtra(Constants.NOTIFICATION_API_KEY,
+                Intent intent = new Intent(XmppConstants.ACTION_SHOW_NOTIFICATION);
+                intent.putExtra(XmppConstants.NOTIFICATION_ID, notificationId);
+                intent.putExtra(XmppConstants.NOTIFICATION_API_KEY,
                         notificationApiKey);
                 intent
-                        .putExtra(Constants.NOTIFICATION_TITLE,
+                        .putExtra(XmppConstants.NOTIFICATION_TITLE,
                                 notificationTitle);
-                intent.putExtra(Constants.NOTIFICATION_MESSAGE,
+                intent.putExtra(XmppConstants.NOTIFICATION_MESSAGE,
                         notificationMessage);
-                intent.putExtra(Constants.NOTIFICATION_URI, notificationUri);
+                intent.putExtra(XmppConstants.NOTIFICATION_URI, notificationUri);
                 //                intent.setData(Uri.parse((new StringBuilder(
                 //                        "notif://notification.androidpn.org/")).append(
                 //                        notificationApiKey).append("/").append(

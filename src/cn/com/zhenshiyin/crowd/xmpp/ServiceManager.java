@@ -77,15 +77,15 @@ public final class ServiceManager {
         Log.i(LOGTAG, "xmppPort=" + xmppPort);
 
         sharedPrefs = context.getSharedPreferences(
-                Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+                XmppConstants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         Editor editor = sharedPrefs.edit();
-        editor.putString(Constants.API_KEY, apiKey);
-        editor.putString(Constants.VERSION, version);
-        editor.putString(Constants.XMPP_HOST, xmppHost);
-        editor.putInt(Constants.XMPP_PORT, Integer.parseInt(xmppPort));
-        editor.putString(Constants.CALLBACK_ACTIVITY_PACKAGE_NAME,
+        editor.putString(XmppConstants.API_KEY, apiKey);
+        editor.putString(XmppConstants.VERSION, version);
+        editor.putString(XmppConstants.XMPP_HOST, xmppHost);
+        editor.putInt(XmppConstants.XMPP_PORT, Integer.parseInt(xmppPort));
+        editor.putString(XmppConstants.CALLBACK_ACTIVITY_PACKAGE_NAME,
                 callbackActivityPackageName);
-        editor.putString(Constants.CALLBACK_ACTIVITY_CLASS_NAME,
+        editor.putString(XmppConstants.CALLBACK_ACTIVITY_CLASS_NAME,
                 callbackActivityClassName);
         editor.commit();
         // Log.i(LOGTAG, "sharedPrefs=" + sharedPrefs.toString());
@@ -178,7 +178,7 @@ public final class ServiceManager {
 
     public void setNotificationIcon(int iconId) {
         Editor editor = sharedPrefs.edit();
-        editor.putInt(Constants.NOTIFICATION_ICON, iconId);
+        editor.putInt(XmppConstants.NOTIFICATION_ICON, iconId);
         editor.commit();
     }
 

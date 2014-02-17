@@ -2,9 +2,6 @@ package cn.com.zhenshiyin.crowd.activity.main;
 
 import java.util.List;
 
-import com.baidu.android.pushservice.PushConstants;
-import com.baidu.android.pushservice.PushManager;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;

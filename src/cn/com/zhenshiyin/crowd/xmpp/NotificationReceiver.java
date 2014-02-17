@@ -45,17 +45,17 @@ public final class NotificationReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         Log.d(LOGTAG, "action=" + action);
 
-        if (Constants.ACTION_SHOW_NOTIFICATION.equals(action)) {
+        if (XmppConstants.ACTION_SHOW_NOTIFICATION.equals(action)) {
             String notificationId = intent
-                    .getStringExtra(Constants.NOTIFICATION_ID);
+                    .getStringExtra(XmppConstants.NOTIFICATION_ID);
             String notificationApiKey = intent
-                    .getStringExtra(Constants.NOTIFICATION_API_KEY);
+                    .getStringExtra(XmppConstants.NOTIFICATION_API_KEY);
             String notificationTitle = intent
-                    .getStringExtra(Constants.NOTIFICATION_TITLE);
+                    .getStringExtra(XmppConstants.NOTIFICATION_TITLE);
             String notificationMessage = intent
-                    .getStringExtra(Constants.NOTIFICATION_MESSAGE);
+                    .getStringExtra(XmppConstants.NOTIFICATION_MESSAGE);
             String notificationUri = intent
-                    .getStringExtra(Constants.NOTIFICATION_URI);
+                    .getStringExtra(XmppConstants.NOTIFICATION_URI);
 
             Log.d(LOGTAG, "notificationId=" + notificationId);
             Log.d(LOGTAG, "notificationApiKey=" + notificationApiKey);

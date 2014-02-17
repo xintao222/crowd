@@ -20,7 +20,7 @@ package cn.com.zhenshiyin.crowd.xmpp;
  * 
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-public class Constants {
+public class XmppConstants {
 
     public static final String SHARED_PREFERENCE_NAME = "client_preferences";
 
@@ -79,5 +79,13 @@ public class Constants {
     public static final String ACTION_NOTIFICATION_CLEARED = "org.androidpn.client.NOTIFICATION_CLEARED";
     
     public static final String SERVICE_NAME = "cn.com.zhenshiyin.crowd.xmpp.NotificationService";
-
+    
+    //MSG
+    public static final int CONNECT_SUCCESSFULLY = 0;
+    
+    public static final int CONNECT_FAILED = 1;
+    
+    public static final int LOGIN_SUCCESSFULLY = 2;
+    
+    public static final int LOGIN_FAILED = 3;
 }

@@ -51,23 +51,23 @@ public class NotificationDetailsActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         SharedPreferences sharedPrefs = this.getSharedPreferences(
-                Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+                XmppConstants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         callbackActivityPackageName = sharedPrefs.getString(
-                Constants.CALLBACK_ACTIVITY_PACKAGE_NAME, "");
+                XmppConstants.CALLBACK_ACTIVITY_PACKAGE_NAME, "");
         callbackActivityClassName = sharedPrefs.getString(
-                Constants.CALLBACK_ACTIVITY_CLASS_NAME, "");
+                XmppConstants.CALLBACK_ACTIVITY_CLASS_NAME, "");
 
         Intent intent = getIntent();
         String notificationId = intent
-                .getStringExtra(Constants.NOTIFICATION_ID);
+                .getStringExtra(XmppConstants.NOTIFICATION_ID);
         String notificationApiKey = intent
-                .getStringExtra(Constants.NOTIFICATION_API_KEY);
+                .getStringExtra(XmppConstants.NOTIFICATION_API_KEY);
         String notificationTitle = intent
-                .getStringExtra(Constants.NOTIFICATION_TITLE);
+                .getStringExtra(XmppConstants.NOTIFICATION_TITLE);
         String notificationMessage = intent
-                .getStringExtra(Constants.NOTIFICATION_MESSAGE);
+                .getStringExtra(XmppConstants.NOTIFICATION_MESSAGE);
         String notificationUri = intent
-                .getStringExtra(Constants.NOTIFICATION_URI);
+                .getStringExtra(XmppConstants.NOTIFICATION_URI);
 
         Log.d(LOGTAG, "notificationId=" + notificationId);
         Log.d(LOGTAG, "notificationApiKey=" + notificationApiKey);

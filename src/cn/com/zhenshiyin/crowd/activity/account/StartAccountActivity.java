@@ -8,7 +8,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -26,22 +28,9 @@ import cn.com.zhenshiyin.crowd.util.LogUtil;
 import cn.com.zhenshiyin.crowd.xmpp.NotificationService;
 import cn.com.zhenshiyin.crowd.xmpp.ServiceManager;
 import cn.com.zhenshiyin.crowd.xmpp.XmppManager;
-
+import cn.com.zhenshiyin.crowd.xmpp.XmppConstants;
 public class StartAccountActivity extends BaseActivity {
-	protected static NotificationService.NotificationServiceBinder  binder;
-	protected static NotificationService ns;
-	protected ServiceConnection conn = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			 Log.d(TAG, "onServiceConnected()...");
-			binder = (NotificationService.NotificationServiceBinder) service;
-			ns = binder.getService();
-		}
 
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-		}
-	};
 	private static final String TAG = "StartAccountActivity";
 	
 	private static final int REQUEST_LOGIN = 100;
@@ -221,14 +210,15 @@ public class StartAccountActivity extends BaseActivity {
 		// Invalid check. TODO:
 		name = nameEditor.getText().toString();
 		password = passwordEditor.getText().toString();
-    	XmppManager xm = new XmppManager(ns);
-    	xm.setPassword(password);
-    	xm.setUsername(name);
     	
-    	ns.setXmppManager(xm);
-        ns.taskSubmitter.submit(new Runnable() {
+		xmppManager.setPassword(password);
+		xmppManager.setUsername(name);
+    	xmppManager.registerAccountHandler(handler);
+    	
+		notificationService.setXmppManager(xmppManager);
+		notificationService.taskSubmitter.submit(new Runnable() {
             public void run() {
-                ns.start();
+            	notificationService.start();
             }
         });
 		
@@ -236,21 +226,16 @@ public class StartAccountActivity extends BaseActivity {
 
 	}
 
-	public void onClickMyOrder(View v) {
-
-	}
-	
-	public void onClickMyPrize(View v) {
-
-	}
-
-	public void onClickCart(View v) {
-
-	}
-	
-	public void onClickMyFavorite(View v) {
-
-	}
+	protected Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			if (LogUtil.IS_LOG)Log.i(TAG, "msg is " + msg.what);
+			switch (msg.what) {
+			case XmppConstants.LOGIN_SUCCESSFULLY:
+				if (LogUtil.IS_LOG)Log.i(TAG, "login successfully ");
+				break;
+			}
+			}
+	};
 	
 	public void onClickLogout(View v) {
 		SharedPreferences preference = getSharedPreferences("account",MODE_PRIVATE);
