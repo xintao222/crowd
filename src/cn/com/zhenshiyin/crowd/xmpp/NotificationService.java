@@ -237,7 +237,7 @@ public class NotificationService extends Service {
         xmppManager.connect();
     }
 
-    private void stop() {
+    public void stop() {
         Log.d(LOGTAG, "stop()...");
         unregisterNotificationReceiver();
         unregisterConnectivityReceiver();

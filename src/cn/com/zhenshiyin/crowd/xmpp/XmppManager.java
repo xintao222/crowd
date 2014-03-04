@@ -257,7 +257,9 @@ public class XmppManager {
 
     private void submitLoginTask() {
         Log.d(LOGTAG, "submitLoginTask()...");
-        submitRegisterTask();
+	      //We divided login and register task. Registration is for creating an new account, Login is called if user have an account already.
+	        //submitRegisterTask(); 
+        submitConnectTask();//since no register task, connect-task is needed.
         addTask(new LoginTask());
     }
 
@@ -316,31 +318,37 @@ public class XmppManager {
                     // Connect to the server
                     connection.connect();
                     Log.i(LOGTAG, "XMPP connected successfully");
-	                Message msg = accountHandler.obtainMessage();
-	                msg.what = XmppConstants.CONNECT_SUCCESSFULLY;
-	                msg.obj = 0;
-	                accountHandler.sendMessage(msg);
+                    if(accountHandler != null){
+                    	Message msg = accountHandler.obtainMessage();
+                    	msg.what = XmppConstants.CONNECT_SUCCESSFULLY;
+                    	msg.obj = 0;
+                    	accountHandler.sendMessage(msg);
+                    }
                     // packet provider
                     ProviderManager.getInstance().addIQProvider("notification",
                             "androidpn:iq:notification",
                             new NotificationIQProvider());
 
                 } catch (XMPPException e) {
-                    Message msg = accountHandler.obtainMessage();
-                    msg.what = XmppConstants.CONNECT_FAILED;
-                    msg.obj = 0;
-                    accountHandler.sendMessage(msg);
-                    Log.e(LOGTAG, "XMPP connection failed", e);
+                	if(accountHandler != null){
+                		Message msg = accountHandler.obtainMessage();
+                		msg.what = XmppConstants.CONNECT_FAILED;
+                		msg.obj = 0;
+                		accountHandler.sendMessage(msg);
+                	}
+                    Log.e(LOGTAG, "XMPP connection failed: "+ e.toString());
                 }
 
                 xmppManager.runTask();
 
             } else {
                 Log.i(LOGTAG, "XMPP connected already");
-                Message msg = accountHandler.obtainMessage();
-                msg.what = XmppConstants.CONNECT_SUCCESSFULLY;
-                msg.obj = 0;
-                accountHandler.sendMessage(msg);
+                if(accountHandler != null){
+                	Message msg = accountHandler.obtainMessage();
+                	msg.what = XmppConstants.CONNECT_SUCCESSFULLY;
+                	msg.obj = 0;
+                	accountHandler.sendMessage(msg);
+                }
                 xmppManager.runTask();
             }
         }
@@ -443,19 +451,20 @@ public class XmppManager {
             Log.i(LOGTAG, "LoginTask.run()...");
 
             if (!xmppManager.isAuthenticated()) {
-                Log.d(LOGTAG, "username=" + username);
-                Log.d(LOGTAG, "password=" + password);
+                Log.i(LOGTAG, "username=" + username);
+                Log.i(LOGTAG, "password=" + password);
 
                 try {
                     xmppManager.getConnection().login(
                             xmppManager.getUsername(),
                             xmppManager.getPassword(), XMPP_RESOURCE_NAME);
-                    Log.d(LOGTAG, "Loggedn in successfully");
-                    Message msg = accountHandler.obtainMessage();
-                    msg.what = XmppConstants.LOGIN_SUCCESSFULLY;
-                    msg.obj = 0;
-                    accountHandler.sendMessage(msg);
-
+                    Log.i(LOGTAG, "Loggedn in successfully");
+                    if(accountHandler != null){
+                    	Message msg = accountHandler.obtainMessage();
+                    	msg.what = XmppConstants.LOGIN_SUCCESSFULLY;
+                    	msg.obj = 0;
+                    	accountHandler.sendMessage(msg);
+                    }
                     // connection listener
                     if (xmppManager.getConnectionListener() != null) {
                         xmppManager.getConnection().addConnectionListener(
@@ -464,10 +473,10 @@ public class XmppManager {
                     
                     
                    Roster roster =  xmppManager.getConnection().getRoster();
-                   Log.e(LOGTAG, "LoginTask.run()... roster = " + roster);
+                   Log.i(LOGTAG, "LoginTask.run()... roster = " + roster);
                    
                    int rosterNumber = roster.getEntryCount();
-                   Log.e(LOGTAG, "LoginTask.run()... roster number = " + rosterNumber);
+                   Log.i(LOGTAG, "LoginTask.run()... roster number = " + rosterNumber);
                    
                    
 //                   Collection<RosterEntry> reslist = roster.getEntries();
@@ -486,13 +495,13 @@ public class XmppManager {
                 } catch (XMPPException e) {
                     Log.e(LOGTAG, "LoginTask.run()... xmpp error");
                     Log.e(LOGTAG, "Failed to login to xmpp server. Caused by: "
-                            + e.getMessage());
-                    
-                    Message msg = accountHandler.obtainMessage();
-                    msg.what = XmppConstants.LOGIN_FAILED;
-                    msg.obj = 0;
-                    accountHandler.sendMessage(msg);
-                    
+                            + e.toString());
+                    if(accountHandler != null){
+                    	Message msg = accountHandler.obtainMessage();
+                    	msg.what = XmppConstants.LOGIN_FAILED;
+                    	msg.obj = 0;
+                    	accountHandler.sendMessage(msg);
+                    }
                     String INVALID_CREDENTIALS_ERROR_CODE = "401";
                     String errorMessage = e.getMessage();
                     if (errorMessage != null
@@ -506,22 +515,26 @@ public class XmppManager {
                 } catch (Exception e) {
                     Log.e(LOGTAG, "LoginTask.run()... other error");
                     Log.e(LOGTAG, "Failed to login to xmpp server. Caused by: "
-                            + e.getMessage());
-                    
-                    Message msg = accountHandler.obtainMessage();
-                    msg.what = XmppConstants.LOGIN_FAILED;
-                    msg.obj = 0;
-                    accountHandler.sendMessage(msg);
-                    
+                            + e.toString());
+
+                    if(accountHandler != null){
+                    	Message msg = accountHandler.obtainMessage();
+                    	msg.what = XmppConstants.LOGIN_FAILED;
+                    	msg.obj = 0;
+                    	accountHandler.sendMessage(msg);
+                    }
                     xmppManager.startReconnectionThread();
                 }
 
             } else {
                 Log.i(LOGTAG, "Logged in already");
-                Message msg = accountHandler.obtainMessage();
-                msg.what = XmppConstants.LOGIN_SUCCESSFULLY;
-                msg.obj = 0;
-                accountHandler.sendMessage(msg);
+                if(accountHandler != null){
+                	Message msg = accountHandler.obtainMessage();
+                	msg.what = XmppConstants.LOGIN_SUCCESSFULLY;
+                	msg.obj = 0;
+                	accountHandler.sendMessage(msg);
+                }
+                
                 xmppManager.runTask();
             }
 

@@ -232,6 +232,11 @@ public class StartAccountActivity extends BaseActivity {
 			switch (msg.what) {
 			case XmppConstants.LOGIN_SUCCESSFULLY:
 				if (LogUtil.IS_LOG)Log.i(TAG, "login successfully ");
+				saveUserInfo();
+				freshViews();
+				break;
+			case XmppConstants.LOGIN_FAILED:
+				if (LogUtil.IS_LOG)Log.i(TAG, "login failed ");
 				break;
 			}
 			}
@@ -247,5 +252,11 @@ public class StartAccountActivity extends BaseActivity {
 		edit.commit();
 
 		freshViews();
+		
+		notificationService.taskSubmitter.submit(new Runnable() {
+            public void run() {
+            	notificationService.stop();
+            }
+        });
 	}
 }
