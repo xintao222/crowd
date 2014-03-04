@@ -227,6 +227,15 @@ public class NotificationService extends Service {
                 PhoneStateListener.LISTEN_NONE);
         unregisterReceiver(connectivityReceiver);
     }
+    
+    public void register() {
+        Log.d(LOGTAG, "register()...");
+        registerNotificationReceiver();
+        registerConnectivityReceiver();
+        // Intent intent = getIntent();
+        // startService(intent);
+        xmppManager.reregisterAccount();
+    }
 
     public void start() {
         Log.d(LOGTAG, "start()...");

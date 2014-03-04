@@ -88,4 +88,8 @@ public class XmppConstants {
     public static final int LOGIN_SUCCESSFULLY = 2;
     
     public static final int LOGIN_FAILED = 3;
+    
+    public static final int REGISTER_SUCCESSFULLY = 4;
+    
+    public static final int REGISTER_FAILED = 5;
 }

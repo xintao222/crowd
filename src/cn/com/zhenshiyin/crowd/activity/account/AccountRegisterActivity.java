@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import cn.com.zhenshiyin.crowd.common.Constants;
 import cn.com.zhenshiyin.crowd.common.Common.onSimpleAlertDismiss;
 import cn.com.zhenshiyin.crowd.util.LogUtil;
 import cn.com.zhenshiyin.crowd.util.ValidateUtil;
+import cn.com.zhenshiyin.crowd.xmpp.XmppConstants;
 
 public class AccountRegisterActivity extends BaseActivity {
 	private static final String TAG = "AccountRegisterActivity";
@@ -58,9 +60,9 @@ public class AccountRegisterActivity extends BaseActivity {
 	private OnClickListener mStepClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if (CheckValid()) {
+//			if (CheckValid()) {
 				submitRegister(OPT_SUBMIT_REGISTER);
-			}
+//			}
 		}
 		
 	};
@@ -178,8 +180,38 @@ public class AccountRegisterActivity extends BaseActivity {
 	}
 	
 	private void submitRegister(int opType) {
+		mPhone = mPhoneView.getText().toString();
+		mPassword = mPassWordView.getText().toString();
+    	
+		xmppManager.setPassword(mPassword);
+		xmppManager.setUsername(mPhone);
+    	xmppManager.registerAccountHandler(handler);
+    	
+		notificationService.setXmppManager(xmppManager);
+		notificationService.taskSubmitter.submit(new Runnable() {
+            public void run() {
+            	notificationService.register();
+            }
+        });
 
 	}
+	
+	protected Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			if (LogUtil.IS_LOG)Log.i(TAG, "msg is " + msg.what);
+			switch (msg.what) {
+			case XmppConstants.REGISTER_SUCCESSFULLY:
+				if (LogUtil.IS_LOG)Log.i(TAG, "register successfully ");
+				saveUserInfo();
+				showToast(getString(R.string.account_register_success));
+				break;
+			case XmppConstants.REGISTER_FAILED:
+				if (LogUtil.IS_LOG)Log.i(TAG, "register failed ");
+				showToast(getString(R.string.account_register_success));
+				break;
+			}
+			}
+	};
 	
 	private void startTimer() {
 		mTimer = 60;

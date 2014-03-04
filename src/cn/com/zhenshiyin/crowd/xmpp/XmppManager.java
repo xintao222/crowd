@@ -194,7 +194,7 @@ public class XmppManager {
 
     public void reregisterAccount() {
         removeAccount();
-        submitLoginTask();
+        submitRegisterTask();
         runTask();
     }
 
