@@ -14,13 +14,11 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.Html;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -142,9 +140,18 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		String static_img_url = Constants.staticMapUrl(latitude, longitude);
 		if (LogUtil.IS_LOG) LogUtil.d(TAG, "static_img_url = " + static_img_url);
 		URLImageGetter xxx = new URLImageGetter(this, mAddressThumb);
-		mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
+		//mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
+		mAddressThumb.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showMap();
+			}
+			
+		});
 		
 	}
+
 	
     public void sendMessage(String msg){
 
@@ -167,17 +174,20 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		}
     }
 	
+	public void showMap() {
+        Intent intent = new Intent(this, NavigationMapActivity.class);
+        intent.putExtra(Constants.KEY_LATITUDE, remoteLatitude);
+        intent.putExtra(Constants.KEY_LONGTITUDE, remoteLongitude);
+        intent.putExtra(Constants.KEY_CURRENT_LONGTITUDE, longitude);
+        intent.putExtra(Constants.KEY_CURRENT_LATITUDE, latitude);
+        
+        startActivity(intent);
+	}
     @Override
     public void onClick(View view) {
     	 switch(view.getId()) {
         case R.id.nav:
-            Intent intent = new Intent(this, NavigationMapActivity.class);
-            intent.putExtra(Constants.KEY_LATITUDE, remoteLatitude);
-            intent.putExtra(Constants.KEY_LONGTITUDE, remoteLongitude);
-            intent.putExtra(Constants.KEY_CURRENT_LONGTITUDE, longitude);
-            intent.putExtra(Constants.KEY_CURRENT_LATITUDE, latitude);
-            
-            startActivity(intent);
+        	showMap();
             break;  
     	case R.id.get:
     		initChat();
