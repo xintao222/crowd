@@ -113,4 +113,13 @@ public class Constants {
 	public static String BARCODE_PARAM_CATEGORY_RAMBLE = "3";
 	
 	
+	private static final String STATIC_MAP = "<img src=\"http://api.map.baidu.com/staticimage?center=%s&width=600&height=300&&zoom=16&markers=%s\" />";
+	public static String staticMapUrl(String latitude, String longitude) {
+		if(latitude == null || latitude.equals("") || longitude == null || longitude.equals(""))
+			return "";
+		String location = longitude.trim() + "," + latitude.trim();
+		String static_img_url = String.format(STATIC_MAP, location, location).replace("|", "%7c");
+		return static_img_url;
+	}
+	
 }

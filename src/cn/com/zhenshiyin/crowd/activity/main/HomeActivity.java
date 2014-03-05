@@ -18,11 +18,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
+import cn.com.zhenshiyin.crowd.net.URLImageGetter;
 import cn.com.zhenshiyin.crowd.xmpp.XmppConstants;
 import cn.com.zhenshiyin.crowd.xmpp.XmppManager;
 import cn.com.zhenshiyin.crowd.base.BaseActivity;
@@ -34,8 +37,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private static final String TAG = "HomeActivity";
 	private double longitude = -1;
 	private double latitude = -1;
+	private double remoteLongitude = -1;
+	private double remoteLatitude = -1;
 	private Button btnNav;
-	private Button btnStart;
+	private Button btnGet;
+	
+	private TextView mAddressThumb;
 	
 	private LocationClient mLocationClient = null;
 	ChatManager chatManager;
@@ -48,6 +55,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 			latitude = location.getLatitude();
 			
 			if (LogUtil.IS_LOG) Log.d(TAG, "longitude=" + longitude + "; latitude=" + latitude);
+			sendMessage("longitude:" + longitude +";latitude:"+latitude);
+			mLocationClient.stop();
 		}
 
 		@Override
@@ -60,11 +69,26 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
+		
+		mAddressThumb = (TextView) findViewById(R.id.address_pic);
+//		String static_img_url = Constants.staticMapUrl("", "");
+//		if (LogUtil.IS_LOG) LogUtil.d(TAG, "static_img_url = " + static_img_url);
+//		URLImageGetter xxx = new URLImageGetter(this, mAddressThumb);
+//		mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
+//		mAddressThumb.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				//showMap();
+//			}
+//			
+//		});
+		
 		btnNav = (Button) findViewById(R.id.nav);
 		btnNav.setOnClickListener(this);
 		
-		btnStart = (Button) findViewById(R.id.start);
-		btnStart.setOnClickListener(this);
+		btnGet = (Button) findViewById(R.id.get);
+		btnGet.setOnClickListener(this);
 		
 		mLocationClient = new LocationClient(getApplicationContext());     //声明LocationClient类
 	    mLocationClient.registerLocationListener( myListener );    //注册监听函数
@@ -89,15 +113,39 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 						String strMsg = message.getBody();
 						Log.d(TAG, "---------->processMessage from: " + message.getFrom() + ", body: " + strMsg);
 						if(strMsg.equalsIgnoreCase("where")){
-
-						}else if(strMsg.equalsIgnoreCase("pos")){
 							
+							mLocationClient.start();
+							
+						}else if(strMsg.contains("longitude")){
+							int splitPos = strMsg.indexOf(";");
+							//retrieve longitude
+							String remoteLongitudeContnet = strMsg.substring(0, splitPos);
+							int annotationPos = remoteLongitudeContnet.indexOf(":");
+							remoteLongitude = Double.valueOf(remoteLongitudeContnet.substring(annotationPos +1, splitPos));
+							Log.d(TAG, "remoteLongitude: " + remoteLongitude);
+							
+							//retrieve latitude
+							String remoteLatitudeContnet = strMsg.substring(splitPos+1);
+							annotationPos = remoteLatitudeContnet.indexOf(":");
+							remoteLatitude = Double.valueOf(remoteLatitudeContnet.substring(annotationPos +1));
+							Log.d(TAG, "remoteLatitude: " + remoteLatitude);
+							
+							showAddressThumb(remoteLatitude + "", remoteLongitude + "");
 						}
 					}
 				});
 			}
 		});
 	}
+	
+	private void showAddressThumb(String latitude, String longitude){
+		String static_img_url = Constants.staticMapUrl(latitude, longitude);
+		if (LogUtil.IS_LOG) LogUtil.d(TAG, "static_img_url = " + static_img_url);
+		URLImageGetter xxx = new URLImageGetter(this, mAddressThumb);
+		mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
+		
+	}
+	
     public void sendMessage(String msg){
 
 		
@@ -124,14 +172,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
     	 switch(view.getId()) {
         case R.id.nav:
             Intent intent = new Intent(this, NavigationMapActivity.class);
-            intent.putExtra(Constants.KEY_LATITUDE, latitude+0.001);
-            intent.putExtra(Constants.KEY_LONGTITUDE, longitude+0.001);
+            intent.putExtra(Constants.KEY_LATITUDE, remoteLatitude);
+            intent.putExtra(Constants.KEY_LONGTITUDE, remoteLongitude);
             intent.putExtra(Constants.KEY_CURRENT_LONGTITUDE, longitude);
             intent.putExtra(Constants.KEY_CURRENT_LATITUDE, latitude);
             
             startActivity(intent);
             break;  
-    	case R.id.start:
+    	case R.id.get:
     		initChat();
     		sendMessage("where");
     		break;
@@ -143,14 +191,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	protected void onResume() {
 		super.onResume();
 		
-		//mLocationClient.start();
+		//
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
 		
-		mLocationClient.stop();
+		
 	}
 
 }
