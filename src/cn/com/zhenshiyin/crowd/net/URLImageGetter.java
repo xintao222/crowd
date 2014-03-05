@@ -19,6 +19,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.text.Html.ImageGetter;
+import android.util.Log;
 import android.view.Display;
 import android.widget.TextView;
 
@@ -35,7 +36,7 @@ public class URLImageGetter implements ImageGetter {
 	@Override
 	public Drawable getDrawable(String paramString) {
 		final URLDrawable urlDrawable = new URLDrawable(context);
-		
+
 		ImageGetterAsyncTask getterTask = new ImageGetterAsyncTask(urlDrawable);
 		getterTask.execute(paramString);
 		return urlDrawable;

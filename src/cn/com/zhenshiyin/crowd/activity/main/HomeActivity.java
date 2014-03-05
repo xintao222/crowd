@@ -14,6 +14,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,6 +46,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private LocationClient mLocationClient = null;
 	ChatManager chatManager;
 	Chat chat;
+	
+	private final int MSG_REMOTE_POS_RECEIVED = 0;
 	public BDLocationListener myListener = new BDLocationListener() {
 
 		@Override
@@ -73,14 +76,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 //		if (LogUtil.IS_LOG) LogUtil.d(TAG, "static_img_url = " + static_img_url);
 //		URLImageGetter xxx = new URLImageGetter(this, mAddressThumb);
 //		mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
-//		mAddressThumb.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				//showMap();
-//			}
-//			
-//		});
+		mAddressThumb.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				showMap();
+			}
+			
+		});
 		
 		btnNav = (Button) findViewById(R.id.nav);
 		btnNav.setOnClickListener(this);
@@ -128,7 +131,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 							remoteLatitude = Double.valueOf(remoteLatitudeContnet.substring(annotationPos +1));
 							Log.d(TAG, "remoteLatitude: " + remoteLatitude);
 							
-							showAddressThumb(remoteLatitude + "", remoteLongitude + "");
+							//send a msg to main thread and show pic in main thread. An runtime exception will be thrown if we create a async task to download pic.
+			                android.os.Message msg = handler.obtainMessage();
+			                msg.what = MSG_REMOTE_POS_RECEIVED;
+			                msg.obj = null;
+			                handler.sendMessage(msg);
+							
 						}
 					}
 				});
@@ -140,16 +148,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		String static_img_url = Constants.staticMapUrl(latitude, longitude);
 		if (LogUtil.IS_LOG) LogUtil.d(TAG, "static_img_url = " + static_img_url);
 		URLImageGetter xxx = new URLImageGetter(this, mAddressThumb);
-		//mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
-		mAddressThumb.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				showMap();
-			}
-			
-		});
-		
+		mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
 	}
 
 	
@@ -183,6 +182,20 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
         
         startActivity(intent);
 	}
+	
+	protected Handler handler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			
+			switch (msg.what) {
+			case MSG_REMOTE_POS_RECEIVED:
+				showAddressThumb(remoteLatitude + "", remoteLongitude + "");
+
+				break;
+			default:
+				break;
+			}
+			}
+	};
     @Override
     public void onClick(View view) {
     	 switch(view.getId()) {

@@ -16,6 +16,7 @@
 		android:layout_height="@dimen/list_item_height"
 		android:layout_width="match_parent"
 		android:layout_margin="8dip"
+		android:layout_marginTop="8dip"
 		android:text="@string/get_verifycode"
 		android:textColor="@color/white"/>
         	
@@ -24,6 +25,7 @@
 		android:layout_height="@dimen/list_item_height"
 		android:layout_width="match_parent"
 		android:layout_margin="8dip"
+		android:layout_marginTop="8dip"
 		android:text="@string/navigation_nav"
 		android:textColor="@color/white"/>
 
