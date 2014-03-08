@@ -6,7 +6,17 @@ import java.io.InputStream;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.cookie.CookieOrigin;
+import org.apache.http.cookie.CookieSpec;
+import org.apache.http.cookie.CookieSpecFactory;
+import org.apache.http.cookie.MalformedCookieException;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.cookie.BrowserCompatSpec;
+import org.apache.http.params.HttpParams;
 
 import cn.com.zhenshiyin.crowd.util.SystemInfoUtils;
 
@@ -94,9 +104,21 @@ public class URLImageGetter implements ImageGetter {
 			
 			return null;
 		}
-		
+		CookieSpecFactory csf = new CookieSpecFactory() {
+            public CookieSpec newInstance(HttpParams params) {
+                return new BrowserCompatSpec() { 
+                    @Override
+                    public void validate(Cookie cookie, CookieOrigin origin)
+                    throws MalformedCookieException {
+                    }
+                };
+            }
+        };
 		private InputStream fetch(String url) throws ClientProtocolException, IOException {
 			DefaultHttpClient client = new DefaultHttpClient();
+			 client.getCookieSpecs().register("easy", csf);
+			 client.getParams().setParameter(ClientPNames.COOKIE_POLICY, "easy");
+			// HttpClientParams.setCookiePolicy(client.getParams(), CookiePolicy.BROWSER_COMPATIBILITY);
 			HttpGet request = new HttpGet(url.trim());
 			
 			HttpResponse response = client.execute(request);

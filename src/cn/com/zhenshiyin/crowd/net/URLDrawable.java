@@ -21,10 +21,12 @@ public class URLDrawable extends BitmapDrawable {
 	
 	@Override
 	public void draw(Canvas canvas) {
-		Log.d("URLDrawable", "this=" + this.getBounds());
+		//Log.d("URLDrawable", "this=" + this.getBounds());
 		if (drawable != null) {
-			Log.d("URLDrawable", "draw=" + drawable.getBounds());
+			//Log.d("URLDrawable", "draw=" + drawable.getBounds());
 			drawable.draw(canvas);
+			drawable.invalidateSelf();
+			
 		}
 	}
 	

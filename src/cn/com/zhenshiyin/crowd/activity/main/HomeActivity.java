@@ -149,6 +149,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		if (LogUtil.IS_LOG) LogUtil.d(TAG, "static_img_url = " + static_img_url);
 		URLImageGetter xxx = new URLImageGetter(this, mAddressThumb);
 		mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
+		mAddressThumb.invalidate();
 	}
 
 	
