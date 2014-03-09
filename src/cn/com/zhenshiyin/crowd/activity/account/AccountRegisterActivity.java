@@ -1,13 +1,16 @@
 package cn.com.zhenshiyin.crowd.activity.account;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
@@ -24,7 +27,9 @@ import cn.com.zhenshiyin.crowd.common.Constants;
 import cn.com.zhenshiyin.crowd.common.Common.onSimpleAlertDismiss;
 import cn.com.zhenshiyin.crowd.util.LogUtil;
 import cn.com.zhenshiyin.crowd.util.ValidateUtil;
+import cn.com.zhenshiyin.crowd.xmpp.NotificationService;
 import cn.com.zhenshiyin.crowd.xmpp.XmppConstants;
+import cn.com.zhenshiyin.crowd.xmpp.XmppManager;
 
 public class AccountRegisterActivity extends BaseActivity {
 	private static final String TAG = "AccountRegisterActivity";
@@ -56,6 +61,27 @@ public class AccountRegisterActivity extends BaseActivity {
 	private String mConfirmPassword = null;
 	
 	TextView error;
+	
+	protected static NotificationService.NotificationServiceBinder  binder;
+	protected static NotificationService notificationService;
+	protected static XmppManager xmppManager;
+	protected ServiceConnection conn = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			 Log.d(TAG, "onServiceConnected()...");
+			binder = (NotificationService.NotificationServiceBinder) service;
+			notificationService = binder.getService();
+			xmppManager = notificationService.getXmppManager();
+			if(xmppManager == null){
+				xmppManager = new XmppManager(notificationService);
+				notificationService.setXmppManager(xmppManager);
+			}
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+		}
+	};
 	
 	private OnClickListener mStepClickListener = new OnClickListener() {
 		@Override
@@ -101,6 +127,15 @@ public class AccountRegisterActivity extends BaseActivity {
 		setContentView(R.layout.account_register);
 		
 		initViews();
+		
+    	Intent intent = new Intent(this, cn.com.zhenshiyin.crowd.xmpp.NotificationService.class);
+
+    	boolean bindResult = getApplicationContext().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    	if (!bindResult) {
+            if (LogUtil.IS_LOG) Log.d(TAG, "Binding to service failed");
+            throw new IllegalStateException("Binding to service failed " + intent);
+
+        }
 	}
 	
 	@Override
@@ -187,7 +222,7 @@ public class AccountRegisterActivity extends BaseActivity {
 		xmppManager.setUsername(mPhone);
     	xmppManager.registerAccountHandler(handler);
     	
-		notificationService.setXmppManager(xmppManager);
+		
 		notificationService.taskSubmitter.submit(new Runnable() {
             public void run() {
             	notificationService.register();

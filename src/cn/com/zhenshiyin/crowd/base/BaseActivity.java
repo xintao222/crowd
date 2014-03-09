@@ -37,22 +37,7 @@ import com.baidu.mobstat.StatService;
 public class BaseActivity extends FragmentActivity implements ThreadCallBack{
 	private static final String TAG = BaseActivity.class.getSimpleName();
 
-	protected static NotificationService.NotificationServiceBinder  binder;
-	protected static NotificationService notificationService;
-	protected static XmppManager xmppManager;
-	protected ServiceConnection conn = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			 Log.d(TAG, "onServiceConnected()...");
-			binder = (NotificationService.NotificationServiceBinder) service;
-			notificationService = binder.getService();
-			xmppManager = new XmppManager(notificationService);
-		}
 
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-		}
-	};
 	/**
 	 * 当前activity所持有的所有请求
 	 */

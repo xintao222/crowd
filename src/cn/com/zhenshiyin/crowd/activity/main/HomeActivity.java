@@ -5,6 +5,7 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
@@ -15,8 +16,11 @@ import com.baidu.location.LocationClientOption;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.text.Html;
 import android.util.Log;
@@ -25,6 +29,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import cn.com.zhenshiyin.crowd.net.URLImageGetter;
+import cn.com.zhenshiyin.crowd.xmpp.NotificationService;
 import cn.com.zhenshiyin.crowd.xmpp.XmppConstants;
 import cn.com.zhenshiyin.crowd.xmpp.XmppManager;
 import cn.com.zhenshiyin.crowd.base.BaseActivity;
@@ -46,6 +51,26 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private LocationClient mLocationClient = null;
 	ChatManager chatManager;
 	Chat chat;
+	protected static NotificationService.NotificationServiceBinder  binder;
+	protected static NotificationService notificationService;
+	protected static XmppManager xmppManager;
+	protected ServiceConnection conn = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			 Log.d(TAG, "onServiceConnected()...");
+			binder = (NotificationService.NotificationServiceBinder) service;
+			notificationService = binder.getService();
+			xmppManager = notificationService.getXmppManager();
+			if(xmppManager == null){
+				xmppManager = new XmppManager(notificationService);
+				notificationService.setXmppManager(xmppManager);
+			}
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+		}
+	};
 	
 	private final int MSG_REMOTE_POS_RECEIVED = 0;
 	public BDLocationListener myListener = new BDLocationListener() {
@@ -99,12 +124,24 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	    locationClientOption.setScanSpan(5000);
 	    mLocationClient.setLocOption(locationClientOption);
 	    
+    	Intent intent = new Intent(this, cn.com.zhenshiyin.crowd.xmpp.NotificationService.class);
 
+    	boolean bindResult = getApplicationContext().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    	if (!bindResult) {
+            if (LogUtil.IS_LOG) Log.d(TAG, "Binding to service failed");
+            throw new IllegalStateException("Binding to service failed " + intent);
+
+        }
 	    
 	}
 	private void initChat(){
-    	XmppManager xm = notificationService.getXmppManager();
-    	chatManager = xm.getConnection().getChatManager();
+    	//XmppManager xm = notificationService.getXmppManager();
+		XMPPConnection connection = xmppManager.getConnection();
+		if(connection == null){
+			Log.d(TAG, "connection is null ");
+			return;
+		}
+    	chatManager = xmppManager.getConnection().getChatManager();
     	chatManager.addChatListener(new ChatManagerListener() {
 			@Override
 			public void chatCreated(Chat chat, boolean able) {
@@ -163,6 +200,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		xmppHost = "127.0.0.1";//Yes, it is ugly hard code to avoid RCVD: <message id="NlU08-4" to="lisi@192.168.101.122/AndroidpnClient" from="lisi@127.0.0.1/AndroidpnClient"
 		Log.d(TAG, "xmppHost: "+xmppHost);
 		String recipient = "a";
+		if(chat == null)
 		chat = chatManager.createChat(recipient + "@" + xmppHost + "/AndroidpnClient", null);
 		
 		try {

@@ -53,8 +53,26 @@ public class StartAccountActivity extends BaseActivity {
 	private TextView mChangyoubiView;
 	private ProgressBar mChangyoubiProgressView;
 	
-	private boolean mFromShake = false;
-	private boolean mFromOrder = false;
+	protected static NotificationService.NotificationServiceBinder  binder;
+	protected static NotificationService notificationService;
+	protected static XmppManager xmppManager;
+	protected ServiceConnection conn = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			 Log.d(TAG, "onServiceConnected()...");
+			binder = (NotificationService.NotificationServiceBinder) service;
+			notificationService = binder.getService();
+			xmppManager = notificationService.getXmppManager();
+			if(xmppManager == null){
+				xmppManager = new XmppManager(notificationService);
+				notificationService.setXmppManager(xmppManager);
+			}
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+		}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -215,7 +233,7 @@ public class StartAccountActivity extends BaseActivity {
 		xmppManager.setUsername(name);
     	xmppManager.registerAccountHandler(handler);
     	
-		notificationService.setXmppManager(xmppManager);
+		
 		notificationService.taskSubmitter.submit(new Runnable() {
             public void run() {
             	notificationService.start();

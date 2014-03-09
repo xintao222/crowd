@@ -28,6 +28,9 @@ public class StartActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		//start notificationService
+		Intent intent = new Intent(this, cn.com.zhenshiyin.crowd.xmpp.NotificationService.class);
+		startService(intent);
 
 	}
 	
