@@ -1,13 +1,19 @@
 package cn.com.zhenshiyin.crowd.activity.main;
 
 
+import java.util.Collection;
+
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -51,6 +57,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private LocationClient mLocationClient = null;
 	ChatManager chatManager;
 	Chat chat;
+	String friend;
 	protected static NotificationService.NotificationServiceBinder  binder;
 	protected static NotificationService notificationService;
 	protected static XmppManager xmppManager;
@@ -141,7 +148,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 			Log.d(TAG, "connection is null ");
 			return;
 		}
-    	chatManager = xmppManager.getConnection().getChatManager();
+    	chatManager = connection.getChatManager();
     	chatManager.addChatListener(new ChatManagerListener() {
 			@Override
 			public void chatCreated(Chat chat, boolean able) {
@@ -179,6 +186,61 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 				});
 			}
 		});
+    	 	
+            if (!connection.isAuthenticated()) {
+                throw new IllegalStateException("Not logged in to server.");
+            }
+            if (connection.isAnonymous()) {
+                throw new IllegalStateException("Anonymous users can't have a roster.");
+            }
+            
+            Roster r = connection.getRoster();
+        	if(r == null){
+        		Log.d(TAG, "roster is null");
+        	}
+    		if (r != null) {
+    			r.addRosterListener(new RosterListener() {
+    				public void entriesDeleted(Collection<String> addresses) {
+    					Log.i(TAG, "entriesDeleted()");
+    					System.out.println("deleted: " + addresses.size());
+    				}
+
+    				public void entriesUpdated(Collection<String> addresses) {
+    					Log.i(TAG, "entriesUpdated()");
+    					System.out.println("updated: " + addresses.size());
+    				}
+
+    				public void entriesAdded(Collection<String> addresses) {
+    					Log.i(TAG, "entriesAdded()");
+    					System.out.println("added: " + addresses.size());
+    					for(String address : addresses){
+    						System.out.println("added:address =  " + address);
+    					}
+    				}
+
+    				public void presenceChanged(Presence presence) {
+    					Log.i(TAG, "presenceChanged()");
+    					System.out.println("Presence changed: "
+    							+ presence.getFrom() + " " + presence + " "
+    							+ presence.getStatus());
+    					System.out.println(presence.getProperty("key"));
+    				}
+    			});
+
+    			Log.d(TAG, "roster...Entry count:" + r.getEntryCount());
+    			
+    			Collection<RosterEntry> entries = r.getEntries();
+    			// loop through
+    			for (RosterEntry entry : entries) {
+    				Presence entryPresence = r.getPresence(entry.getUser());
+    				Log.d(TAG, "initChat roster..." + entry.getUser());
+    				friend = entry.getUser();
+    				Presence.Type userType = entryPresence.getType();
+    			}
+
+    			Log.d(TAG, "presence..." + r.getEntryCount());
+    		}            
+        
 	}
 	
 	private void showAddressThumb(String latitude, String longitude){
@@ -199,9 +261,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		
 		xmppHost = "127.0.0.1";//Yes, it is ugly hard code to avoid RCVD: <message id="NlU08-4" to="lisi@192.168.101.122/AndroidpnClient" from="lisi@127.0.0.1/AndroidpnClient"
 		Log.d(TAG, "xmppHost: "+xmppHost);
-		String recipient = "a";
+		
 		if(chat == null)
-		chat = chatManager.createChat(recipient + "@" + xmppHost + "/AndroidpnClient", null);
+		chat = chatManager.createChat(friend + "@" + xmppHost + "/AndroidpnClient", null);
 		
 		try {
 			Log.d(TAG, "-------->send msg: "+msg);

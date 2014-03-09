@@ -59,7 +59,7 @@ public class StartAccountActivity extends BaseActivity {
 	TextView error;
 
 	private TextView mAccountNameView;
-	private TextView mChangyoubiView;
+	private EditText mEditFriend;
 	private ProgressBar mChangyoubiProgressView;
 	
 	protected static NotificationService.NotificationServiceBinder  binder;
@@ -171,7 +171,7 @@ public class StartAccountActivity extends BaseActivity {
 		});
 		
 		mAccountNameView = (TextView) findViewById(R.id.account_name);
-		mChangyoubiView = (TextView) findViewById(R.id.account_friend);
+		mEditFriend = (EditText) findViewById(R.id.account_friend);
 		mChangyoubiProgressView = (ProgressBar) findViewById(R.id.account_friend_progress);
 	}
 
@@ -332,7 +332,7 @@ public class StartAccountActivity extends BaseActivity {
 			});
 
 			Log.d(TAG, "roster...Entry count:" + r.getEntryCount());
-			//Toast.makeText(this.getApplicationContext(), "roster count = " + r.getEntryCount(), Toast.LENGTH_SHORT).show();
+			
 			Collection<RosterEntry> entries = r.getEntries();
 			// loop through
 			for (RosterEntry entry : entries) {
@@ -341,18 +341,12 @@ public class StartAccountActivity extends BaseActivity {
 				Presence.Type userType = entryPresence.getType();
 			}
 
-			// try{
-			// r.createEntry("haobo1@127.0.0.1/AndroidpnClient", "haobo", null);
-			//
-			// }catch(Exception e)
-			// {
-			// e.printStackTrace();
-			// }
 			Log.d(TAG, "presence..." + r.getEntryCount());
 		}
 		
 		try {
-			r.createEntry("maozedong@127.0.0.1", "maozedong", null);
+			String friend = mEditFriend.getText().toString();
+			r.createEntry(friend +"127.0.0.1", friend, null);
 		} catch (XMPPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
