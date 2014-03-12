@@ -1,6 +1,10 @@
 package cn.com.zhenshiyin.crowd.common;
 
 import java.util.HashMap;
+import java.util.List;
+
+import cn.com.zhenshiyin.crowd.net.utils.Utils;
+import cn.com.zhenshiyin.crowd.net.utils.RequestParameter;
 
 import android.text.TextUtils;
 import android.view.View;
@@ -113,13 +117,23 @@ public class Constants {
 	public static String BARCODE_PARAM_CATEGORY_RAMBLE = "3";
 	
 	
-	private static final String STATIC_MAP = "<img src=\"http://api.map.baidu.com/staticimage?center=%s&width=600&height=300&&zoom=16&markers=%s\" />";
-	public static String staticMapUrl(String latitude, String longitude) {
-		if(latitude == null || latitude.equals("") || longitude == null || longitude.equals(""))
-			return "";
-		String location = longitude.trim() + "," + latitude.trim();
-		String static_img_url = String.format(STATIC_MAP, location, location).replace("|", "%7c");
-		return static_img_url;
+	public static final String STATIC_MAP = "http://api.map.baidu.com/staticimage";
+
+	public static String makeUrl(String url,List<RequestParameter> parameter) {
+
+		 if(parameter!=null&&parameter.size()>0){
+			 StringBuilder bulider  = new StringBuilder();
+			 for(RequestParameter p:parameter){
+				 if(bulider.length()!=0){
+					 bulider.append("&");
+				 }
+				 
+				 bulider.append(Utils.encode(p.getName()));
+				 bulider.append("=");
+				 bulider.append(Utils.encode(p.getValue()));
+			 } 
+			 url += "?"+bulider.toString();
+		 }
+		return url;
 	}
-	
 }

@@ -1,8 +1,15 @@
 package cn.com.zhenshiyin.crowd.activity.main;
 
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.ChatManagerListener;
@@ -14,7 +21,10 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.Base64.InputStream;
 
+import com.alipay.android.app.net.HttpClient;
+import com.alipay.android.app.sdk.AliPay;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -28,12 +38,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import cn.com.zhenshiyin.crowd.net.utils.RequestParameter;
 import cn.com.zhenshiyin.crowd.net.URLImageGetter;
 import cn.com.zhenshiyin.crowd.xmpp.NotificationService;
 import cn.com.zhenshiyin.crowd.xmpp.XmppConstants;
@@ -52,12 +66,17 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private Button btnNav;
 	private Button btnGet;
 	
-	private TextView mAddressThumb;
+	private ImageView mAddressThumb;
 	
 	private LocationClient mLocationClient = null;
 	ChatManager chatManager;
 	Chat chat;
 	String friend;
+	
+	private final int MSG_REMOTE_POS_RECEIVED = 0;
+	private final int MSG_PIC_RECEIVED_SUCESSFULLY = 1;
+	private final int MSG_PIC_RECEIVED_FAILED = 2;
+	
 	protected static NotificationService.NotificationServiceBinder  binder;
 	protected static NotificationService notificationService;
 	protected static XmppManager xmppManager;
@@ -78,8 +97,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		public void onServiceDisconnected(ComponentName name) {
 		}
 	};
-	
-	private final int MSG_REMOTE_POS_RECEIVED = 0;
+
 	public BDLocationListener myListener = new BDLocationListener() {
 
 		@Override
@@ -103,7 +121,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		
-		mAddressThumb = (TextView) findViewById(R.id.address_pic);
+		mAddressThumb = (ImageView) findViewById(R.id.address_thumb);
+		mAddressThumb.setBackgroundResource(R.drawable.ic_launcher);
+
 //		String static_img_url = Constants.staticMapUrl("", "");
 //		if (LogUtil.IS_LOG) LogUtil.d(TAG, "static_img_url = " + static_img_url);
 //		URLImageGetter xxx = new URLImageGetter(this, mAddressThumb);
@@ -142,7 +162,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	    
 	}
 	private void initChat(){
-    	//XmppManager xm = notificationService.getXmppManager();
 		XMPPConnection connection = xmppManager.getConnection();
 		if(connection == null){
 			Log.d(TAG, "connection is null ");
@@ -243,13 +262,41 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
         
 	}
 	
-	private void showAddressThumb(String latitude, String longitude){
-		String static_img_url = Constants.staticMapUrl(latitude, longitude);
-		if (LogUtil.IS_LOG) LogUtil.d(TAG, "static_img_url = " + static_img_url);
-		URLImageGetter xxx = new URLImageGetter(this, mAddressThumb);
-		mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
-		mAddressThumb.invalidate();
+	private void showAddressThumbInHandler(String latitude, String longitude){
+		Thread thread = new Thread(runnable);
+		thread.start();
 	}
+
+	Runnable runnable = new Runnable() {
+
+		@Override
+		public void run() {
+			DefaultHttpClient httpClient = new DefaultHttpClient();
+			List<cn.com.zhenshiyin.crowd.net.utils.RequestParameter> parameter = new ArrayList<RequestParameter>();
+			parameter.clear();
+			parameter.add(new RequestParameter("center", remoteLongitude +","+remoteLatitude));
+			parameter.add(new RequestParameter("width", "600"));
+			parameter.add(new RequestParameter("height", "300"));
+			parameter.add(new RequestParameter("zoom", "16"));
+			parameter.add(new RequestParameter("markers", remoteLongitude +","+remoteLatitude));
+			
+			String url = Constants.makeUrl(Constants.STATIC_MAP, parameter);
+			if (LogUtil.IS_LOG) LogUtil.d(TAG, "img_url = " + url);
+			HttpGet httpGet = new HttpGet(url);
+			final Bitmap bitmap;
+			try {
+				HttpResponse httpResponse = httpClient.execute(httpGet);
+				bitmap = BitmapFactory.decodeStream(httpResponse.getEntity()
+						.getContent());
+			} catch (Exception e) {
+				handler.obtainMessage(MSG_PIC_RECEIVED_FAILED).sendToTarget();// 获取图片失败
+				Log.d(TAG, "exception when load pic: "+e.toString());
+				return;
+			}
+//			This thread is not created by UI thread, so the only way is to send bitmap object to UI thread and refresh widget.
+			handler.obtainMessage(MSG_PIC_RECEIVED_SUCESSFULLY, bitmap).sendToTarget();
+		}
+	};
 
 	
     public void sendMessage(String msg){
@@ -263,7 +310,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		Log.d(TAG, "xmppHost: "+xmppHost);
 		
 		if(chat == null)
-		chat = chatManager.createChat(friend + "@" + xmppHost + "/AndroidpnClient", null);
+		chat = chatManager.createChat(friend + "/AndroidpnClient", null);
 		
 		try {
 			Log.d(TAG, "-------->send msg: "+msg);
@@ -286,12 +333,16 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	
 	protected Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			
+			Log.d(TAG, "handler got msg:" + msg.what);
 			switch (msg.what) {
 			case MSG_REMOTE_POS_RECEIVED:
-				showAddressThumb(remoteLatitude + "", remoteLongitude + "");
+
+				showAddressThumbInHandler(remoteLatitude + "", remoteLongitude + "");
 
 				break;
+			case MSG_PIC_RECEIVED_SUCESSFULLY:
+				Bitmap bmp = (Bitmap) msg.obj;
+				mAddressThumb.setImageBitmap(bmp);
 			default:
 				break;
 			}

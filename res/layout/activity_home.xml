@@ -7,11 +7,10 @@
     
     <include layout="@layout/title_layout"/>
     
-	    <TextView android:id="@+id/address_pic"
+	    <ImageView android:id="@+id/address_thumb"
 	            android:layout_width="fill_parent"
 	            android:layout_height="120dp"
-	            android:focusable="true"
-	             />
+	            android:focusable="true" />
     
         <Button
 		android:id="@+id/get"
