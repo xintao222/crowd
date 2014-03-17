@@ -1,12 +1,8 @@
 package cn.com.zhenshiyin.crowd.activity.main;
 
-
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -21,15 +17,10 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.util.Base64.InputStream;
-
-import com.alipay.android.app.net.HttpClient;
-import com.alipay.android.app.sdk.AliPay;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -40,15 +31,12 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import cn.com.zhenshiyin.crowd.net.utils.RequestParameter;
-import cn.com.zhenshiyin.crowd.net.URLImageGetter;
 import cn.com.zhenshiyin.crowd.xmpp.NotificationService;
 import cn.com.zhenshiyin.crowd.xmpp.XmppConstants;
 import cn.com.zhenshiyin.crowd.xmpp.XmppManager;
@@ -83,11 +71,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	protected ServiceConnection conn = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			 Log.d(TAG, "onServiceConnected()...");
+			if(LogUtil.IS_LOG) Log.d(TAG, "onServiceConnected()...");
 			binder = (NotificationService.NotificationServiceBinder) service;
 			notificationService = binder.getService();
 			xmppManager = notificationService.getXmppManager();
 			if(xmppManager == null){
+				if(LogUtil.IS_LOG) Log.d(TAG, "xmppManager is null, we create it now...");
 				xmppManager = new XmppManager(notificationService);
 				notificationService.setXmppManager(xmppManager);
 			}
@@ -98,23 +87,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		}
 	};
 
-	public BDLocationListener myListener = new BDLocationListener() {
-
-		@Override
-		public void onReceiveLocation(BDLocation location) {
-			longitude = location.getLongitude();
-			latitude = location.getLatitude();
-			
-			if (LogUtil.IS_LOG) Log.d(TAG, "longitude=" + longitude + "; latitude=" + latitude);
-			sendMessage("longitude:" + longitude +";latitude:"+latitude);
-			mLocationClient.stop();
-		}
-
-		@Override
-		public void onReceivePoi(BDLocation arg0) {
-		}
-		
-	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -124,10 +96,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		mAddressThumb = (ImageView) findViewById(R.id.address_thumb);
 		mAddressThumb.setBackgroundResource(R.drawable.ic_launcher);
 
-//		String static_img_url = Constants.staticMapUrl("", "");
-//		if (LogUtil.IS_LOG) LogUtil.d(TAG, "static_img_url = " + static_img_url);
-//		URLImageGetter xxx = new URLImageGetter(this, mAddressThumb);
-//		mAddressThumb.setText(Html.fromHtml(static_img_url, xxx, null));
 		mAddressThumb.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -151,6 +119,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	    locationClientOption.setScanSpan(5000);
 	    mLocationClient.setLocOption(locationClientOption);
 	    
+	    if(LogUtil.IS_LOG) Log.d(TAG, "onCreate(), bind service now.");
     	Intent intent = new Intent(this, cn.com.zhenshiyin.crowd.xmpp.NotificationService.class);
 
     	boolean bindResult = getApplicationContext().bindService(intent, conn, Context.BIND_AUTO_CREATE);
@@ -164,7 +133,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private void initChat(){
 		XMPPConnection connection = xmppManager.getConnection();
 		if(connection == null){
-			Log.d(TAG, "connection is null ");
+			if(LogUtil.IS_LOG) Log.d(TAG, "connection is null ");
 			return;
 		}
     	chatManager = connection.getChatManager();
@@ -175,7 +144,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 					@Override
 					public void processMessage(Chat chat2, Message message) {
 						String strMsg = message.getBody();
-						Log.d(TAG, "---------->processMessage from: " + message.getFrom() + ", body: " + strMsg);
+						if(LogUtil.IS_LOG) Log.d(TAG, "processMessage from: " + message.getFrom() + ", body: " + strMsg);
 						if(strMsg.equalsIgnoreCase("where")){
 							
 							mLocationClient.start();
@@ -186,13 +155,13 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 							String remoteLongitudeContnet = strMsg.substring(0, splitPos);
 							int annotationPos = remoteLongitudeContnet.indexOf(":");
 							remoteLongitude = Double.valueOf(remoteLongitudeContnet.substring(annotationPos +1, splitPos));
-							Log.d(TAG, "remoteLongitude: " + remoteLongitude);
+							if(LogUtil.IS_LOG) Log.d(TAG, "remoteLongitude: " + remoteLongitude);
 							
 							//retrieve latitude
 							String remoteLatitudeContnet = strMsg.substring(splitPos+1);
 							annotationPos = remoteLatitudeContnet.indexOf(":");
 							remoteLatitude = Double.valueOf(remoteLatitudeContnet.substring(annotationPos +1));
-							Log.d(TAG, "remoteLatitude: " + remoteLatitude);
+							if(LogUtil.IS_LOG) Log.d(TAG, "remoteLatitude: " + remoteLatitude);
 							
 							//send a msg to main thread and show pic in main thread. An runtime exception will be thrown if we create a async task to download pic.
 			                android.os.Message msg = handler.obtainMessage();
@@ -215,22 +184,22 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
             
             Roster r = connection.getRoster();
         	if(r == null){
-        		Log.d(TAG, "roster is null");
+        		if(LogUtil.IS_LOG) Log.d(TAG, "roster is null");
         	}
     		if (r != null) {
     			r.addRosterListener(new RosterListener() {
     				public void entriesDeleted(Collection<String> addresses) {
-    					Log.i(TAG, "entriesDeleted()");
+    					if(LogUtil.IS_LOG) Log.i(TAG, "entriesDeleted()");
     					System.out.println("deleted: " + addresses.size());
     				}
 
     				public void entriesUpdated(Collection<String> addresses) {
-    					Log.i(TAG, "entriesUpdated()");
+    					if(LogUtil.IS_LOG) Log.i(TAG, "entriesUpdated()");
     					System.out.println("updated: " + addresses.size());
     				}
 
     				public void entriesAdded(Collection<String> addresses) {
-    					Log.i(TAG, "entriesAdded()");
+    					if(LogUtil.IS_LOG) Log.i(TAG, "entriesAdded()");
     					System.out.println("added: " + addresses.size());
     					for(String address : addresses){
     						System.out.println("added:address =  " + address);
@@ -238,7 +207,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
     				}
 
     				public void presenceChanged(Presence presence) {
-    					Log.i(TAG, "presenceChanged()");
+    					if(LogUtil.IS_LOG) Log.i(TAG, "presenceChanged()");
     					System.out.println("Presence changed: "
     							+ presence.getFrom() + " " + presence + " "
     							+ presence.getStatus());
@@ -246,18 +215,18 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
     				}
     			});
 
-    			Log.d(TAG, "roster...Entry count:" + r.getEntryCount());
+    			if(LogUtil.IS_LOG) Log.d(TAG, "roster...Entry count:" + r.getEntryCount());
     			
     			Collection<RosterEntry> entries = r.getEntries();
     			// loop through
     			for (RosterEntry entry : entries) {
     				Presence entryPresence = r.getPresence(entry.getUser());
-    				Log.d(TAG, "initChat roster..." + entry.getUser());
+    				if(LogUtil.IS_LOG) Log.d(TAG, "initChat roster..." + entry.getUser());
     				friend = entry.getUser();
     				Presence.Type userType = entryPresence.getType();
     			}
 
-    			Log.d(TAG, "presence..." + r.getEntryCount());
+    			if(LogUtil.IS_LOG) Log.d(TAG, "presence..." + r.getEntryCount());
     		}            
         
 	}
@@ -290,7 +259,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 						.getContent());
 			} catch (Exception e) {
 				handler.obtainMessage(MSG_PIC_RECEIVED_FAILED).sendToTarget();// 获取图片失败
-				Log.d(TAG, "exception when load pic: "+e.toString());
+				if(LogUtil.IS_LOG) Log.d(TAG, "exception when load pic: "+e.toString());
 				return;
 			}
 //			This thread is not created by UI thread, so the only way is to send bitmap object to UI thread and refresh widget.
@@ -313,7 +282,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		chat = chatManager.createChat(friend + "/AndroidpnClient", null);
 		
 		try {
-			Log.d(TAG, "-------->send msg: "+msg);
+			if(LogUtil.IS_LOG) Log.d(TAG, "send msg: "+msg);
 			chat.sendMessage(msg);
 			
 		} catch (XMPPException e) {
@@ -333,7 +302,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	
 	protected Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			Log.d(TAG, "handler got msg:" + msg.what);
+			if(LogUtil.IS_LOG) Log.d(TAG, "handler got msg:" + msg.what);
 			switch (msg.what) {
 			case MSG_REMOTE_POS_RECEIVED:
 
@@ -359,21 +328,32 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
     		sendMessage("where");
     		break;
             }
-    
     }
     
+	public BDLocationListener myListener = new BDLocationListener() {
+
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			longitude = location.getLongitude();
+			latitude = location.getLatitude();
+			
+			if (LogUtil.IS_LOG) Log.d(TAG, "longitude=" + longitude + "; latitude=" + latitude);
+			sendMessage("longitude:" + longitude +";latitude:"+latitude);
+			mLocationClient.stop();
+		}
+
+		@Override
+		public void onReceivePoi(BDLocation arg0) {
+		}
+	};
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		//
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
-		
 	}
 
 }
