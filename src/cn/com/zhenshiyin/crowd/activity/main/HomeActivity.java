@@ -69,6 +69,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	protected static NotificationService notificationService;
 	protected static XmppManager xmppManager;
 	protected ServiceConnection conn = new ServiceConnection() {
+		
+		//Question: if user A log out and user B login, how to reget binder and notificationService?
+		
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			if(LogUtil.IS_LOG) Log.d(TAG, "onServiceConnected()...");
@@ -84,6 +87,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
+			if(LogUtil.IS_LOG) Log.d(TAG, "onServiceDisconnected()...");
+			binder = null;
+			notificationService = null;
+			xmppManager = null;
 		}
 	};
 
@@ -119,14 +126,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	    locationClientOption.setScanSpan(5000);
 	    mLocationClient.setLocOption(locationClientOption);
 	    
-	    if(LogUtil.IS_LOG) Log.d(TAG, "onCreate(), bind service now.");
-    	Intent intent = new Intent(this, cn.com.zhenshiyin.crowd.xmpp.NotificationService.class);
 
-    	boolean bindResult = getApplicationContext().bindService(intent, conn, Context.BIND_AUTO_CREATE);
-    	if (!bindResult) {
-            if (LogUtil.IS_LOG) Log.d(TAG, "Binding to service failed");
-            throw new IllegalStateException("Binding to service failed " + intent);
-        }
 	}
 
 	private void showAddressThumbInHandler(String latitude, String longitude){
@@ -350,6 +350,16 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		// We bind service onResume because User A may log out and User B login, then new connection must be retrieved.
+	    if(LogUtil.IS_LOG) Log.d(TAG, "onResume(), bind service now.");
+    	Intent intent = new Intent(this, cn.com.zhenshiyin.crowd.xmpp.NotificationService.class);
+
+    	boolean bindResult = getApplicationContext().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    	if (!bindResult) {
+            if (LogUtil.IS_LOG) Log.d(TAG, "Binding to service failed");
+            throw new IllegalStateException("Binding to service failed " + intent);
+        }
 	}
 	
 	@Override
