@@ -51,8 +51,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private double latitude = -1;
 	private double remoteLongitude = -1;
 	private double remoteLatitude = -1;
-	private Button btnNav;
-	private Button btnGet;
+
+	private Button btnRefresh;
 	
 	private ImageView mAddressThumb;
 	
@@ -112,11 +112,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 			
 		});
 		
-		btnNav = (Button) findViewById(R.id.nav);
-		btnNav.setOnClickListener(this);
-		
-		btnGet = (Button) findViewById(R.id.get);
-		btnGet.setOnClickListener(this);
+		btnRefresh = (Button) findViewById(R.id.refresh);
+		btnRefresh.setOnClickListener(this);
 		
 		mLocationClient = new LocationClient(getApplicationContext());     //声明LocationClient类
 	    mLocationClient.registerLocationListener( myListener );    //注册监听函数
@@ -215,10 +212,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
     @Override
     public void onClick(View view) {
     	 switch(view.getId()) {
-        case R.id.nav:
-        	showMap();
-            break;  
-    	case R.id.get:
+    	case R.id.refresh:
     		initChat();
     		sendMessage("where");
     		break;

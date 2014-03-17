@@ -13,21 +13,12 @@
 	            android:focusable="true" />
     
         <Button
-		android:id="@+id/get"
+		android:id="@+id/refresh"
 		android:layout_height="@dimen/list_item_height"
 		android:layout_width="match_parent"
 		android:layout_margin="8dip"
 		android:layout_marginTop="8dip"
-		android:text="@string/get_verifycode"
-		android:textColor="@color/white"/>
-        	
-    	<Button
-		android:id="@+id/nav"
-		android:layout_height="@dimen/list_item_height"
-		android:layout_width="match_parent"
-		android:layout_margin="8dip"
-		android:layout_marginTop="8dip"
-		android:text="@string/navigation_nav"
-		android:textColor="@color/white"/>
+		android:text="@string/button_refresh"
+		android:textColor="@color/black"/>
 
 </LinearLayout>
