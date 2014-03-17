@@ -126,17 +126,118 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
     	if (!bindResult) {
             if (LogUtil.IS_LOG) Log.d(TAG, "Binding to service failed");
             throw new IllegalStateException("Binding to service failed " + intent);
-
         }
-	    
 	}
+
+	private void showAddressThumbInHandler(String latitude, String longitude){
+		Thread thread = new Thread(runnable);
+		thread.start();
+	}
+
+	Runnable runnable = new Runnable() {
+		@Override
+		public void run() {
+			DefaultHttpClient httpClient = new DefaultHttpClient();
+			List<cn.com.zhenshiyin.crowd.net.utils.RequestParameter> parameter = new ArrayList<RequestParameter>();
+			parameter.clear();
+			parameter.add(new RequestParameter("center", remoteLongitude +","+remoteLatitude));
+			parameter.add(new RequestParameter("width", "600"));
+			parameter.add(new RequestParameter("height", "300"));
+			parameter.add(new RequestParameter("zoom", "16"));
+			parameter.add(new RequestParameter("markers", remoteLongitude +","+remoteLatitude));
+			
+			String url = Constants.makeUrl(Constants.STATIC_MAP, parameter);
+			if (LogUtil.IS_LOG) LogUtil.d(TAG, "img_url = " + url);
+			HttpGet httpGet = new HttpGet(url);
+			final Bitmap bitmap;
+			try {
+				HttpResponse httpResponse = httpClient.execute(httpGet);
+				bitmap = BitmapFactory.decodeStream(httpResponse.getEntity()
+						.getContent());
+			} catch (Exception e) {
+				handler.obtainMessage(MSG_PIC_RECEIVED_FAILED).sendToTarget();// 获取图片失败
+				if(LogUtil.IS_LOG) Log.d(TAG, "exception when load pic: "+e.toString());
+				return;
+			}
+//			This thread is not created by UI thread, so the only way is to send bitmap object to UI thread and refresh widget.
+			handler.obtainMessage(MSG_PIC_RECEIVED_SUCESSFULLY, bitmap).sendToTarget();
+		}
+	};
+
+    public void sendMessage(String msg){
+
+		
+		SharedPreferences sharedPrefs;
+        sharedPrefs = getSharedPreferences(XmppConstants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+		String xmppHost = sharedPrefs.getString(XmppConstants.XMPP_HOST, "localhost");
+		
+		xmppHost = "127.0.0.1";//Yes, it is ugly hard code to avoid RCVD: <message id="NlU08-4" to="lisi@192.168.101.122/AndroidpnClient" from="lisi@127.0.0.1/AndroidpnClient"
+		Log.d(TAG, "xmppHost: "+xmppHost);
+		
+		if(chat == null)
+		chat = chatManager.createChat(friend + "/AndroidpnClient", null);
+		
+		try {
+			if(LogUtil.IS_LOG) Log.d(TAG, "send msg: "+msg);
+			chat.sendMessage(msg);
+			
+		} catch (XMPPException e) {
+			e.printStackTrace();
+		}
+    }
+	
+	public void showMap() {
+        Intent intent = new Intent(this, NavigationMapActivity.class);
+        intent.putExtra(Constants.KEY_LATITUDE, remoteLatitude);
+        intent.putExtra(Constants.KEY_LONGTITUDE, remoteLongitude);
+        intent.putExtra(Constants.KEY_CURRENT_LONGTITUDE, longitude);
+        intent.putExtra(Constants.KEY_CURRENT_LATITUDE, latitude);
+        
+        startActivity(intent);
+	}
+	
+	protected Handler handler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			if(LogUtil.IS_LOG) Log.d(TAG, "handler got msg:" + msg.what);
+			switch (msg.what) {
+			case MSG_REMOTE_POS_RECEIVED:
+				showAddressThumbInHandler(remoteLatitude + "", remoteLongitude + "");
+				break;
+			case MSG_PIC_RECEIVED_SUCESSFULLY:
+				Bitmap bmp = (Bitmap) msg.obj;
+				mAddressThumb.setImageBitmap(bmp);
+			default:
+				break;
+			}
+		}
+	};
+	
+    @Override
+    public void onClick(View view) {
+    	 switch(view.getId()) {
+        case R.id.nav:
+        	showMap();
+            break;  
+    	case R.id.get:
+    		initChat();
+    		sendMessage("where");
+    		break;
+            }
+    }
+    
 	private void initChat(){
 		XMPPConnection connection = xmppManager.getConnection();
 		if(connection == null){
 			if(LogUtil.IS_LOG) Log.d(TAG, "connection is null ");
 			return;
 		}
+		
     	chatManager = connection.getChatManager();
+		if(chatManager == null){
+			if(LogUtil.IS_LOG) Log.d(TAG, "chatManager is null ");
+			return;
+		}
+		
     	chatManager.addChatListener(new ChatManagerListener() {
 			@Override
 			public void chatCreated(Chat chat, boolean able) {
@@ -146,9 +247,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 						String strMsg = message.getBody();
 						if(LogUtil.IS_LOG) Log.d(TAG, "processMessage from: " + message.getFrom() + ", body: " + strMsg);
 						if(strMsg.equalsIgnoreCase("where")){
-							
 							mLocationClient.start();
-							
 						}else if(strMsg.contains("longitude")){
 							int splitPos = strMsg.indexOf(";");
 							//retrieve longitude
@@ -168,7 +267,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 			                msg.what = MSG_REMOTE_POS_RECEIVED;
 			                msg.obj = null;
 			                handler.sendMessage(msg);
-							
 						}
 					}
 				});
@@ -176,9 +274,11 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		});
     	 	
             if (!connection.isAuthenticated()) {
+            	if(LogUtil.IS_LOG) Log.d(TAG, "connection is not Authenticated. ");
                 throw new IllegalStateException("Not logged in to server.");
             }
             if (connection.isAnonymous()) {
+            	if(LogUtil.IS_LOG) Log.d(TAG, "connection is isAnonymous.");
                 throw new IllegalStateException("Anonymous users can't have a roster.");
             }
             
@@ -226,109 +326,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
     				Presence.Type userType = entryPresence.getType();
     			}
 
-    			if(LogUtil.IS_LOG) Log.d(TAG, "presence..." + r.getEntryCount());
-    		}            
-        
-	}
-	
-	private void showAddressThumbInHandler(String latitude, String longitude){
-		Thread thread = new Thread(runnable);
-		thread.start();
+    			if(LogUtil.IS_LOG) Log.d(TAG, "presence account:" + r.getEntryCount());
+    		}
 	}
 
-	Runnable runnable = new Runnable() {
-
-		@Override
-		public void run() {
-			DefaultHttpClient httpClient = new DefaultHttpClient();
-			List<cn.com.zhenshiyin.crowd.net.utils.RequestParameter> parameter = new ArrayList<RequestParameter>();
-			parameter.clear();
-			parameter.add(new RequestParameter("center", remoteLongitude +","+remoteLatitude));
-			parameter.add(new RequestParameter("width", "600"));
-			parameter.add(new RequestParameter("height", "300"));
-			parameter.add(new RequestParameter("zoom", "16"));
-			parameter.add(new RequestParameter("markers", remoteLongitude +","+remoteLatitude));
-			
-			String url = Constants.makeUrl(Constants.STATIC_MAP, parameter);
-			if (LogUtil.IS_LOG) LogUtil.d(TAG, "img_url = " + url);
-			HttpGet httpGet = new HttpGet(url);
-			final Bitmap bitmap;
-			try {
-				HttpResponse httpResponse = httpClient.execute(httpGet);
-				bitmap = BitmapFactory.decodeStream(httpResponse.getEntity()
-						.getContent());
-			} catch (Exception e) {
-				handler.obtainMessage(MSG_PIC_RECEIVED_FAILED).sendToTarget();// 获取图片失败
-				if(LogUtil.IS_LOG) Log.d(TAG, "exception when load pic: "+e.toString());
-				return;
-			}
-//			This thread is not created by UI thread, so the only way is to send bitmap object to UI thread and refresh widget.
-			handler.obtainMessage(MSG_PIC_RECEIVED_SUCESSFULLY, bitmap).sendToTarget();
-		}
-	};
-
-	
-    public void sendMessage(String msg){
-
-		
-		SharedPreferences sharedPrefs;
-        sharedPrefs = getSharedPreferences(XmppConstants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
-		String xmppHost = sharedPrefs.getString(XmppConstants.XMPP_HOST, "localhost");
-		
-		xmppHost = "127.0.0.1";//Yes, it is ugly hard code to avoid RCVD: <message id="NlU08-4" to="lisi@192.168.101.122/AndroidpnClient" from="lisi@127.0.0.1/AndroidpnClient"
-		Log.d(TAG, "xmppHost: "+xmppHost);
-		
-		if(chat == null)
-		chat = chatManager.createChat(friend + "/AndroidpnClient", null);
-		
-		try {
-			if(LogUtil.IS_LOG) Log.d(TAG, "send msg: "+msg);
-			chat.sendMessage(msg);
-			
-		} catch (XMPPException e) {
-			e.printStackTrace();
-		}
-    }
-	
-	public void showMap() {
-        Intent intent = new Intent(this, NavigationMapActivity.class);
-        intent.putExtra(Constants.KEY_LATITUDE, remoteLatitude);
-        intent.putExtra(Constants.KEY_LONGTITUDE, remoteLongitude);
-        intent.putExtra(Constants.KEY_CURRENT_LONGTITUDE, longitude);
-        intent.putExtra(Constants.KEY_CURRENT_LATITUDE, latitude);
-        
-        startActivity(intent);
-	}
-	
-	protected Handler handler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			if(LogUtil.IS_LOG) Log.d(TAG, "handler got msg:" + msg.what);
-			switch (msg.what) {
-			case MSG_REMOTE_POS_RECEIVED:
-
-				showAddressThumbInHandler(remoteLatitude + "", remoteLongitude + "");
-
-				break;
-			case MSG_PIC_RECEIVED_SUCESSFULLY:
-				Bitmap bmp = (Bitmap) msg.obj;
-				mAddressThumb.setImageBitmap(bmp);
-			default:
-				break;
-			}
-			}
-	};
-    @Override
-    public void onClick(View view) {
-    	 switch(view.getId()) {
-        case R.id.nav:
-        	showMap();
-            break;  
-    	case R.id.get:
-    		initChat();
-    		sendMessage("where");
-    		break;
-            }
-    }
     
 	public BDLocationListener myListener = new BDLocationListener() {
 
