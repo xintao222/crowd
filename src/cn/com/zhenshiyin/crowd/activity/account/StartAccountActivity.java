@@ -269,6 +269,7 @@ public class StartAccountActivity extends BaseActivity {
 				if (LogUtil.IS_LOG)Log.i(TAG, "login successfully ");
 				saveUserInfo();
 				freshViews();
+				getRoster();
 				break;
 			case XmppConstants.LOGIN_FAILED:
 				if (LogUtil.IS_LOG)Log.i(TAG, "login failed ");
@@ -294,7 +295,7 @@ public class StartAccountActivity extends BaseActivity {
 	}
 	
     public void addRoster(View view){
-    	Log.d(TAG, "addRoster roster...");
+    	Log.d(TAG, "addRoster entrance.");
     	
     	XMPPConnection connection = xmppManager.getConnection();    	
         if (!connection.isAuthenticated()) {
@@ -352,12 +353,72 @@ public class StartAccountActivity extends BaseActivity {
 		
 		try {
 			String friend = mEditFriend.getText().toString();
-			r.createEntry(friend +"127.0.0.1", friend, null);
+			r.createEntry(friend + "@" + "127.0.0.1", friend, null);
 		} catch (XMPPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+        
+    }
+    
+    public void getRoster(){
+    	Log.d(TAG, "getRoster entrance.");
+    	
+    	XMPPConnection connection = xmppManager.getConnection();    	
+        if (!connection.isAuthenticated()) {
+            throw new IllegalStateException("Not logged in to server.");
+        }
+        if (connection.isAnonymous()) {
+            throw new IllegalStateException("Anonymous users can't have a roster.");
+        }
+        
+        Roster r = xmppManager.getConnection().getRoster();
+    	if(r == null){
+    		Log.d(TAG, "roster is null");
+    	}
+		if (r != null) {
+//			r.addRosterListener(new RosterListener() {
+//				public void entriesDeleted(Collection<String> addresses) {
+//					Log.i(TAG, "entriesDeleted()");
+//					System.out.println("deleted: " + addresses.size());
+//				}
+//
+//				public void entriesUpdated(Collection<String> addresses) {
+//					Log.i(TAG, "entriesUpdated()");
+//					System.out.println("updated: " + addresses.size());
+//				}
+//
+//				public void entriesAdded(Collection<String> addresses) {
+//					Log.i(TAG, "entriesAdded()");
+//					System.out.println("added: " + addresses.size());
+//					for(String address : addresses){
+//						System.out.println("added:address =  " + address);
+//					}
+//				}
+//
+//				public void presenceChanged(Presence presence) {
+//					Log.i(TAG, "presenceChanged()");
+//					System.out.println("Presence changed: "
+//							+ presence.getFrom() + " " + presence + " "
+//							+ presence.getStatus());
+//					System.out.println(presence.getProperty("key"));
+//				}
+//			});
+
+			Log.d(TAG, "roster...Entry count:" + r.getEntryCount());
+			
+			Collection<RosterEntry> entries = r.getEntries();
+			// loop through
+			for (RosterEntry entry : entries) {
+				Presence entryPresence = r.getPresence(entry.getUser());
+				Log.d(TAG, "addRoster[] roster..." + entry.getUser());
+				Presence.Type userType = entryPresence.getType();
+				mEditFriend.setText(entry.getName());
+			}
+
+			Log.d(TAG, "presence..." + r.getEntryCount());
+		}
         
     }
 }
