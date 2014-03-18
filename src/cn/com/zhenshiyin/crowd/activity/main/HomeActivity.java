@@ -32,10 +32,12 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 import cn.com.zhenshiyin.crowd.net.utils.RequestParameter;
 import cn.com.zhenshiyin.crowd.xmpp.NotificationService;
 import cn.com.zhenshiyin.crowd.xmpp.XmppConstants;
@@ -213,23 +215,25 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
     public void onClick(View view) {
     	 switch(view.getId()) {
     	case R.id.refresh:
-    		initChat();
-    		sendMessage("where");
+    		if(initChat())//if we initialize chat successfully, send msg
+    			sendMessage("where");
+    		else
+    			showToast("Somethins is wrong, logout and re-login please.");
     		break;
             }
     }
     
-	private void initChat(){
+	private boolean initChat(){
 		XMPPConnection connection = xmppManager.getConnection();
 		if(connection == null){
 			if(LogUtil.IS_LOG) Log.d(TAG, "connection is null ");
-			return;
+			return false;
 		}
 		
     	chatManager = connection.getChatManager();
 		if(chatManager == null){
 			if(LogUtil.IS_LOG) Log.d(TAG, "chatManager is null ");
-			return;
+			return false;
 		}
 		
     	chatManager.addChatListener(new ChatManagerListener() {
@@ -269,11 +273,13 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
     	 	
             if (!connection.isAuthenticated()) {
             	if(LogUtil.IS_LOG) Log.d(TAG, "connection is not Authenticated. ");
-                throw new IllegalStateException("Not logged in to server.");
+            	showToast("No authenticated connection");
+        		return false;
             }
             if (connection.isAnonymous()) {
             	if(LogUtil.IS_LOG) Log.d(TAG, "connection is isAnonymous.");
-                throw new IllegalStateException("Anonymous users can't have a roster.");
+            	showToast("Anonymous user can't have roster.");
+        		return false;
             }
             
             Roster r = connection.getRoster();
@@ -322,6 +328,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 
     			if(LogUtil.IS_LOG) Log.d(TAG, "presence account:" + r.getEntryCount());
     		}
+    		
+    		return true;
 	}
 
     
