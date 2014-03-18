@@ -22,18 +22,19 @@ import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import cn.com.zhenshiyin.crowd.R;
 import cn.com.zhenshiyin.crowd.base.BaseActivity;
 import cn.com.zhenshiyin.crowd.common.Common;
 import cn.com.zhenshiyin.crowd.common.Constants;
 import cn.com.zhenshiyin.crowd.util.LogUtil;
-
 import cn.com.zhenshiyin.crowd.xmpp.NotificationService;
 import cn.com.zhenshiyin.crowd.xmpp.ServiceManager;
 import cn.com.zhenshiyin.crowd.xmpp.XmppManager;
@@ -43,8 +44,6 @@ public class StartAccountActivity extends BaseActivity {
 	private static final String TAG = "StartAccountActivity";
 	
 	private static final int REQUEST_LOGIN = 100;
-	private static final int REQUEST_USER_INFO = 101;
-	private static final int QUERY_FIRST_ORDER_INFO = 102;
 	
 	private String name = "";
 	private String password = "";
@@ -125,10 +124,6 @@ public class StartAccountActivity extends BaseActivity {
 		
 		passwordEditor.setText("");
 	}
-	
-
-	
-
 	
 	private void initViews() {
 		// Init title.
@@ -299,10 +294,14 @@ public class StartAccountActivity extends BaseActivity {
     	
     	XMPPConnection connection = xmppManager.getConnection();    	
         if (!connection.isAuthenticated()) {
-            throw new IllegalStateException("Not logged in to server.");
+            //throw new IllegalStateException("Not logged in to server.");
+    		showToast("No authenticated connection");
+    		return;
         }
         if (connection.isAnonymous()) {
-            throw new IllegalStateException("Anonymous users can't have a roster.");
+            //throw new IllegalStateException("Anonymous users can't have a roster.");
+    		showToast("Anonymous user can't have roster.");
+    		return;
         }
         
         Roster r = xmppManager.getConnection().getRoster();
@@ -367,10 +366,12 @@ public class StartAccountActivity extends BaseActivity {
     	
     	XMPPConnection connection = xmppManager.getConnection();    	
         if (!connection.isAuthenticated()) {
-            throw new IllegalStateException("Not logged in to server.");
+        	showToast("No authenticated connection");
+    		return;
         }
         if (connection.isAnonymous()) {
-            throw new IllegalStateException("Anonymous users can't have a roster.");
+        	showToast("Anonymous user can't have roster.");
+    		return;
         }
         
         Roster r = xmppManager.getConnection().getRoster();
@@ -417,7 +418,7 @@ public class StartAccountActivity extends BaseActivity {
 				mEditFriend.setText(entry.getName());
 			}
 
-			Log.d(TAG, "presence..." + r.getEntryCount());
+			Log.d(TAG, "presence:" + r.getEntryCount());
 		}
         
     }
