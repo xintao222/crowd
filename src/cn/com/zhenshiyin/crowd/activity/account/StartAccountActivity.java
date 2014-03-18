@@ -68,11 +68,12 @@ public class StartAccountActivity extends BaseActivity {
 	protected ServiceConnection conn = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			 Log.d(TAG, "onServiceConnected()...");
+			if(LogUtil.IS_LOG) Log.d(TAG, "onServiceConnected()...");
 			binder = (NotificationService.NotificationServiceBinder) service;
 			notificationService = binder.getService();
 			xmppManager = notificationService.getXmppManager();
 			if(xmppManager == null){
+				if(LogUtil.IS_LOG) Log.d(TAG, "xmppManager is null, we create it now...");
 				xmppManager = new XmppManager(notificationService);
 				notificationService.setXmppManager(xmppManager);
 			}
@@ -80,6 +81,10 @@ public class StartAccountActivity extends BaseActivity {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
+			if(LogUtil.IS_LOG) Log.d(TAG, "onServiceDisconnected()...");
+			binder = null;
+			notificationService = null;
+			xmppManager = null;
 		}
 	};
 	
@@ -95,14 +100,8 @@ public class StartAccountActivity extends BaseActivity {
         ServiceManager serviceManager = new ServiceManager(this);
         serviceManager.setNotificationIcon(R.drawable.notification);
         serviceManager.startService();
-    	Intent intent = new Intent(this, cn.com.zhenshiyin.crowd.xmpp.NotificationService.class);
+        
 
-    	boolean bindResult = getApplicationContext().bindService(intent, conn, Context.BIND_AUTO_CREATE);
-    	if (!bindResult) {
-            if (LogUtil.IS_LOG) Log.d(TAG, "Binding to service failed");
-            throw new IllegalStateException("Binding to service failed " + intent);
-
-        }
 	}
 	
 	@Override
@@ -230,6 +229,15 @@ public class StartAccountActivity extends BaseActivity {
 		// state may change when resume activity, for example coming back after
 		// registering a new account.
 		freshViews();
+		
+		// We bind service onResume because User A may log out and User B login, then new connection must be retrieved.
+    	Intent intent = new Intent(this, cn.com.zhenshiyin.crowd.xmpp.NotificationService.class);
+    	boolean bindResult = getApplicationContext().bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    	if (!bindResult) {
+            if (LogUtil.IS_LOG) Log.d(TAG, "Binding to service failed");
+            throw new IllegalStateException("Binding to service failed " + intent);
+
+        }
 	}
 
 	
@@ -279,12 +287,10 @@ public class StartAccountActivity extends BaseActivity {
 		edit.commit();
 
 		freshViews();
-		
-		notificationService.taskSubmitter.submit(new Runnable() {
-            public void run() {
-            	notificationService.stop();
-            }
-        });
+
+		xmppManager.setPassword("");
+		xmppManager.setUsername("");
+		xmppManager.disconnect();
 	}
 	
     public void addRoster(View view){
