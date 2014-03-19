@@ -173,8 +173,11 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		xmppHost = "127.0.0.1";//Yes, it is ugly hard code to avoid RCVD: <message id="NlU08-4" to="lisi@192.168.101.122/AndroidpnClient" from="lisi@127.0.0.1/AndroidpnClient"
 		Log.d(TAG, "xmppHost: "+xmppHost);
 		
+		if(chatManager == null)
+			initChat();
+		
 		if(chat == null)
-		chat = chatManager.createChat(friend + "/AndroidpnClient", null);
+			chat = chatManager.createChat(friend + "/AndroidpnClient", null);
 		
 		try {
 			if(LogUtil.IS_LOG) Log.d(TAG, "send msg: "+msg);
@@ -205,6 +208,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 			case MSG_PIC_RECEIVED_SUCESSFULLY:
 				Bitmap bmp = (Bitmap) msg.obj;
 				mAddressThumb.setImageBitmap(bmp);
+			case XmppConstants.LOGIN_SUCCESSFULLY:
+				if (LogUtil.IS_LOG)Log.i(TAG, "login successfully ");
+				break;
+			case XmppConstants.LOGIN_FAILED:
+				if (LogUtil.IS_LOG)Log.i(TAG, "login failed ");
+				break;
 			default:
 				break;
 			}
@@ -226,7 +235,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 	private boolean initChat(){
 		XMPPConnection connection = xmppManager.getConnection();
 		if(connection == null){
-			if(LogUtil.IS_LOG) Log.d(TAG, "connection is null ");
+			if(LogUtil.IS_LOG) Log.d(TAG, "connection is null, connect now... ");
+			xmppManager.connect();
 			return false;
 		}
 		
@@ -349,6 +359,31 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 		public void onReceivePoi(BDLocation arg0) {
 		}
 	};
+	
+	public void tryLogin() {
+		// Invalid check. TODO:
+		
+		SharedPreferences preference = getSharedPreferences("account",
+				this.MODE_PRIVATE);
+		String name = preference.getString("name", "");
+		String password = preference.getString("password", "");
+		if(name.equals("")){
+			if(LogUtil.IS_LOG) Log.i(TAG, "No user is verified on this device.");
+			return;
+		}
+    	
+		if(xmppManager == null){// no bind now
+			return;
+		}else{
+			xmppManager.setPassword(password);
+			xmppManager.setUsername(name);
+			xmppManager.registerAccountHandler(handler);
+			xmppManager.connect();
+		}
+		
+		// Build and request.
+
+	}
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -362,6 +397,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
             if (LogUtil.IS_LOG) Log.d(TAG, "Binding to service failed");
             throw new IllegalStateException("Binding to service failed " + intent);
         }
+    	
+    	tryLogin();
 	}
 	
 	@Override
