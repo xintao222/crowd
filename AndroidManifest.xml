@@ -104,6 +104,13 @@
             </intent-filter>
         </receiver>
 		
+                <!-- 关注开机启动的广播 -->  
+        <receiver android:name="cn.com.zhenshiyin.crowd.automatic.BootBroadCast" >  
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" >
+                </action>  
+            </intent-filter>  
+        </receiver>
 
         <service
             android:name=".service.LocationService"

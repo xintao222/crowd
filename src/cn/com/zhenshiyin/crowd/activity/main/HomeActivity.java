@@ -165,7 +165,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 
     public void sendMessage(String msg){
 
-		
 		SharedPreferences sharedPrefs;
         sharedPrefs = getSharedPreferences(XmppConstants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
 		String xmppHost = sharedPrefs.getString(XmppConstants.XMPP_HOST, "localhost");
@@ -380,9 +379,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
 			xmppManager.registerAccountHandler(handler);
 			xmppManager.connect();
 		}
-		
-		// Build and request.
-
 	}
 	@Override
 	protected void onResume() {
@@ -398,6 +394,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener {
             throw new IllegalStateException("Binding to service failed " + intent);
         }
     	
+    	// To try login on every resume brings hard load for network. Optimize it ASAP.
     	tryLogin();
 	}
 	

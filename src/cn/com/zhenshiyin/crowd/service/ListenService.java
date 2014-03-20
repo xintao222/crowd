@@ -170,7 +170,7 @@ public class ListenService extends Service{
 	
 	@Override
 	public void onStart(Intent intent, int startId) {
-		initChat();
+
 	    if(LogUtil.IS_LOG) Log.d(TAG, "onStart(), bind service now.");
     	Intent i = new Intent(this, NotificationService.class);
 

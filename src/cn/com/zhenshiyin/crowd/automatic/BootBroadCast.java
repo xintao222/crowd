@@ -16,7 +16,7 @@ public class BootBroadCast extends BroadcastReceiver {
 	         * 开机启动服务*/
 		 
 		 if(intent.getAction().equals("android.intent.action.BOOT_COMPLETED")){
-			  if(LogUtil.IS_LOG)Log.i(TAG, "Received boot completed msg.");
+			  if(LogUtil.IS_LOG)Log.i(TAG, "good. Received boot completed msg.");
 		        // Start the service
               Intent ns = NotificationService.getIntent();
               context.startService(ns);
